@@ -12,14 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 LOCAL_PATH := $(call my-dir)/..
-TARGET_PLATFORM := 'android-14'
 
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libpthread_workqueue
-# XXX-should not need to define __ANDROID_API__, possibly a Clang-related bug
-LOCAL_CFLAGS    += -Iinclude -I./src/common -D__ANDROID_API__=14
+LOCAL_CFLAGS    += -Iinclude -I./src -D__ANDROID_API__=14
 LOCAL_SRC_FILES := src/api.c src/posix/manager.c src/posix/thread_info.c src/witem_cache.c src/posix/thread_rt.c
+
+# XXX-WORKAROUND - adding TARGET_PLATFORM to ndk-build causes __ANDROID_API__ to be undefined
+LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_SHARED_LIBRARY)

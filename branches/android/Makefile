@@ -16,8 +16,10 @@
 
 NDK := ~/android/android-ndk-r8
 NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86
-NDK_BUILD := $(NDK)/ndk-build
-CC := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
+NDK_BUILD   := $(NDK)/ndk-build
+NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
+NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
+CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
 
 .PHONY : clean
 
@@ -26,6 +28,8 @@ all: check-environment clean build ndk-build
 check-environment:
 	test -x $(CC)
 	test -x $(NDK_BUILD)
+	test -x $(NDK_INCLUDE)
+	test -x $(NDK_LIB)
 
 build:
 	mkdir build
@@ -43,8 +47,23 @@ build:
 	cp -R libkqueue build
 	cp -R overlay/libkqueue/jni build/libkqueue
 
+	# libdispatch
+	cp -R libdispatch-0* build/libdispatch
+	#TODO:cp -R overlay/libdispatch/jni build/libdispatch
+
 ndk-build: build
 	cd build/libBlocksRuntime && ndk-build
+
+ 	# FIXME: fails due to missing atomics
+	cd build/libdispatch && autoreconf -fvi && \
+          CC=$(CC) \
+	  CPPFLAGS="-I$(NDK_INCLUDE)" \
+ 	  CFLAGS="-nostdlib" \
+	  LIBS="" \
+          LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
+ 	  ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi 
+
+	# FIXME: various failures
 	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
 	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
 

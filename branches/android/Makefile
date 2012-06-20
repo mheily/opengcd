@@ -39,8 +39,13 @@ build:
 	cp -R libpthread_workqueue build
 	cp -R overlay/libpthread_workqueue/jni build/libpthread_workqueue
 
+	# libkqueue
+	cp -R libkqueue build
+	cp -R overlay/libkqueue/jni build/libkqueue
+
 ndk-build: build
 	cd build/libBlocksRuntime && ndk-build
+	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
 	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
 
 clean:

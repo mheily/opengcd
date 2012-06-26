@@ -24,6 +24,7 @@ CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
 # Convenience variables for output objects
 BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
 PWQ_LIB := build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so
+KQUEUE_LIB := build/libkqueue/libs/armeabi/libkqueue.so
 
 .PHONY : clean
 
@@ -62,8 +63,10 @@ $(BLOCKS_RUNTIME): build
 $(PWQ_LIB): build
 	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
 
+$(KQUEUE_LIB): build
+	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
 
-ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB)
+ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
 
  	# FIXME: fails due to missing atomics
 	cd build/libdispatch && autoreconf -fvi && \
@@ -74,8 +77,6 @@ ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB)
           LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
  	  ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi 
 
-	# FIXME: various failures
-	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
 
 clean:
 	rm -rf build

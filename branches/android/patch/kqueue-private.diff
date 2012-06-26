@@ -1,0 +1,36 @@
+Index: src/common/private.h
+===================================================================
+--- src/common/private.h	(revision 553)
++++ src/common/private.h	(working copy)
+@@ -35,6 +35,18 @@
+ 
+ #include "tree.h"
+ 
++/*
++ * Android does not provide pthread_cancel() or related functions.
++ */
++#ifdef __BIONIC__
++#define pthread_setcancelstate(a,b) 	0
++#endif
++
++/* Workaround for Android */
++#ifndef EPOLLONESHOT
++#define EPOLLONESHOT (1 << 30)
++#endif
++
+ /* GCC atomic builtins. 
+  * See: http://gcc.gnu.org/onlinedocs/gcc-4.1.0/gcc/Atomic-Builtins.html 
+  */
+@@ -51,10 +63,11 @@
+ #define MAX_KEVENT  512
+ 
+ 
+-#ifndef NDEBUG
+ 
+ extern int KQUEUE_DEBUG;
+ 
++#ifndef NDEBUG
++
+ #define dbg_puts(str)           do {                                \
+     if (KQUEUE_DEBUG)                                               \
+       fprintf(stderr, "KQ: %s(): %s\n", __func__,str);              \

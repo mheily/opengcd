@@ -21,6 +21,10 @@ NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
 
+# Convenience variables for output objects
+BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
+PWQ_LIB := build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so
+
 .PHONY : clean
 
 all: check-environment clean build ndk-build
@@ -51,8 +55,14 @@ build:
 	cp -R libdispatch-0* build/libdispatch
 	#TODO:cp -R overlay/libdispatch/jni build/libdispatch
 
-ndk-build: build
+$(BLOCKS_RUNTIME): build
 	cd build/libBlocksRuntime && ndk-build
+
+$(PWQ_LIB): build
+	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
+
+
+ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB)
 
  	# FIXME: fails due to missing atomics
 	cd build/libdispatch && autoreconf -fvi && \
@@ -65,7 +75,6 @@ ndk-build: build
 
 	# FIXME: various failures
 	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
-	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
 
 clean:
 	rm -rf build

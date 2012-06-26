@@ -46,6 +46,7 @@ build:
 	# libpthread_workqueue
 	cp -R libpthread_workqueue build
 	cp -R overlay/libpthread_workqueue/jni build/libpthread_workqueue
+	cd build/libpthread_workqueue && patch -p0 < ../../patch/getloadavg.diff
 
 	# libkqueue
 	cp -R libkqueue build

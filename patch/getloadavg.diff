@@ -1,0 +1,65 @@
+Index: src/posix/manager.c
+===================================================================
+--- src/posix/manager.c	(revision 258)
++++ src/posix/manager.c	(working copy)
+@@ -109,6 +109,37 @@
+     return 2;
+ }
+ 
++/* FIXME: should test for symbol instead of for Android */
++#if defined(__ANDROID_API__)
++
++#include <fcntl.h>
++
++int getloadavg(double loadavg[], int nelem)
++{
++   int fd;
++   ssize_t len;
++   char buf[80];
++
++   /* FIXME: this restriction allows the code to be simpler */
++   if (nelem != 1)
++       return (-1);
++
++   fd = open("/proc/loadavg", O_RDONLY);
++   if (fd < 0) 
++       return (-1); 
++
++   len = read(fd, &buf, sizeof(buf));
++   (void) close(fd);
++   if (len < 0) 
++       return (-1);
++
++   if (sscanf(buf, "%lf ", &loadavg[0]) < 1)
++       return (-1);
++
++   return (0); 
++}
++#endif /* defined(__ANDROID_API__) */
++
+ void
+ manager_reinit(void)
+ {
+@@ -148,10 +179,13 @@
+     worker_min = 2; // we can start with a small amount, worker_idle_threshold will be used as new dynamic low watermark
+     worker_idle_threshold = worker_idle_threshold_per_cpu();
+ 
++    /* FIXME: hope this will be supported in Android soon */
++#if !defined(__ANDROID_API__)
+     if (pthread_atfork(NULL, NULL, manager_reinit) < 0) {
+         dbg_perror("pthread_atfork()");
+         return (-1);
+     }
++#endif /* defined(__ANDROID_API__) */
+ 
+     return (0);
+ }
+@@ -279,6 +313,8 @@
+     }
+ 
+     pthread_exit(NULL);
++    /* NOTREACHED */
++    return (NULL);
+ }
+ 
+ static void *

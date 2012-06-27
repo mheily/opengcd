@@ -1,0 +1,195 @@
+Index: test.c
+===================================================================
+--- test.c	(revision 553)
++++ test.c	(working copy)
+@@ -14,7 +14,7 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
+-#ifdef __linux__
++#if defined(__linux__) && !defined(__ANDROID_API__)
+ #include <execinfo.h>
+ #endif
+ #include <sys/types.h>
+@@ -23,15 +23,15 @@
+ 
+ #include "common.h"
+ 
+-static int __thread testnum = 1;
+-static int __thread error_flag = 1;
+-static char __thread * cur_test_id = NULL;
++static int testnum = 1;
++static int error_flag = 1;
++static char * cur_test_id = NULL;
+ 
+ /* FIXME: not portable beyond linux */
+ static void
+ error_handler(int signum)
+ {
+-#ifdef __linux__
++#if defined(__linux__) && !defined(__ANDROID_API__)
+ 	void *buf[32];
+ 
+     /* FIXME: the symbols aren't printing */
+Index: timer.c
+===================================================================
+--- timer.c	(revision 553)
++++ timer.c	(working copy)
+@@ -16,7 +16,7 @@
+ 
+ #include "common.h"
+ 
+-static int __thread kqfd;
++static int kqfd;
+ 
+ void
+ test_kevent_timer_add(void)
+Index: main.c
+===================================================================
+--- main.c	(revision 553)
++++ main.c	(working copy)
+@@ -141,6 +141,7 @@
+ static void
+ test_cancel_state_unchanged(void)
+ {
++#if 0
+     int kq, rc, state;
+     struct timespec ts = { 0, 1000 };
+     struct kevent kev;
+@@ -165,6 +166,7 @@
+         die("kevent() changed cancel state");
+ 
+     close(kq);
++#endif
+ }
+ 
+ 
+@@ -191,6 +193,7 @@
+ static void
+ test_cancel_enabled(void)
+ {
++#if 0
+     int kq, rc;
+     pthread_t thr;
+     void *retval = NULL;
+@@ -214,11 +217,13 @@
+         die("cancellation took too long");
+ 
+     close(kq);
++#endif
+ }
+ 
+ static void *
+ thr_cancel_disabled(void *arg)
+ {
++#if 0
+     int *kq = arg;
+     struct kevent kev;
+     struct timespec ts = { 1, 0 };
+@@ -236,12 +241,14 @@
+     if (state != PTHREAD_CANCEL_DISABLE)
+         die("kevent() didn't preserve pthread cancel state");
+ 
++#endif
+     return NULL; /* success */
+ }
+ 
+ static void
+ test_cancel_disabled(void)
+ {
++#if 0
+     int kq, rc;
+     pthread_t thr;
+     void *retval = NULL;
+@@ -259,6 +266,7 @@
+         die("thread not cancelled");
+ 
+     close(kq);
++#endif
+ }
+ 
+ int 
+Index: kevent.c
+===================================================================
+--- kevent.c	(revision 553)
++++ kevent.c	(working copy)
+@@ -41,7 +41,7 @@
+ kevent_get(int kqfd)
+ {
+     int nfds;
+-    static struct kevent __thread kev;
++    static struct kevent kev;
+ 
+     nfds = kevent(kqfd, NULL, 0, &kev, 1, NULL);
+     if (nfds < 1)
+Index: proc.c
+===================================================================
+--- proc.c	(revision 553)
++++ proc.c	(working copy)
+@@ -18,7 +18,7 @@
+ 
+ static int sigusr1_caught = 0;
+ static pid_t pid;
+-static int __thread kqfd;
++static int kqfd;
+ 
+ static void
+ sig_handler(int signum)
+Index: read.c
+===================================================================
+--- read.c	(revision 553)
++++ read.c	(working copy)
+@@ -19,8 +19,8 @@
+ #include <netinet/in.h>
+ #include "common.h"
+ 
+-static int __thread kqfd;
+-static int __thread sockfd[2];
++static int kqfd;
++static int sockfd[2];
+ 
+ static void
+ kevent_socket_drain(void)
+Index: vnode.c
+===================================================================
+--- vnode.c	(revision 553)
++++ vnode.c	(working copy)
+@@ -16,9 +16,9 @@
+ 
+ #include "common.h"
+ 
+-static int __thread kqfd;
+-static int __thread vnode_fd;
+-static char __thread testfile[1024];
++static int kqfd;
++static int vnode_fd;
++static char testfile[1024];
+ 
+ 
+ /* Create an empty file */
+Index: signal.c
+===================================================================
+--- signal.c	(revision 553)
++++ signal.c	(working copy)
+@@ -16,7 +16,7 @@
+ 
+ #include "common.h"
+ 
+-static int __thread kqfd;
++static int kqfd;
+ 
+ void
+ test_kevent_signal_add(void)
+Index: user.c
+===================================================================
+--- user.c	(revision 553)
++++ user.c	(working copy)
+@@ -16,7 +16,7 @@
+ 
+ #include "common.h"
+ 
+-static int __thread kqfd;
++static int kqfd;
+ 
+ static void
+ test_kevent_user_add_and_delete(void)

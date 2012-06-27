@@ -25,6 +25,7 @@ CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
 BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
 PWQ_LIB := build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so
 KQUEUE_LIB := build/libkqueue/libs/armeabi/libkqueue.so
+DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 
 .PHONY : clean
@@ -54,7 +55,6 @@ build:
 	cp -R libkqueue build
 	cp overlay/libkqueue/Android.mk build/libkqueue
 	cp -R overlay/libkqueue/jni build/libkqueue
-	cp -R overlay/libkqueue/test/jni build/libkqueue/test
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-private.diff
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-timer.diff
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-tls.diff
@@ -80,12 +80,16 @@ check: check-kqueue
 check-kqueue:
 	adb push build/libkqueue/libs/armeabi/libkqueue.so /data
 	adb push build/libkqueue/libs/armeabi/kqtest /data
-	adb shell LD_LIBRARY_PATH=/data /data/kqtest
-	adb shell rm /data/kqtest /data/libkqueue.so
-	
-ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
+	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes /data/kqtest
 
- 	# FIXME: fails due to missing atomics
+# FIXME: use ndk-gdb instead, this is broken
+# Debug the libkqueue unit tests
+#debug-kqueue:
+#	adb forward tcp:5039 tcp:5039
+#	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes gdbserver :5039 /data/kqtest
+	
+# FIXME: fails due to missing atomics
+$(DISPATCH_LIB): build
 	cd build/libdispatch && autoreconf -fvi && \
           CC=$(CC) \
 	  CPPFLAGS="-I$(NDK_INCLUDE)" \
@@ -94,6 +98,9 @@ ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
           LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
  	  ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi 
 
+ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
+#TODO: DISPATCH_LIB
 
 clean:
 	rm -rf build
+	adb shell rm /data/kqtest /data/libkqueue.so

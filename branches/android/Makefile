@@ -26,6 +26,7 @@ BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
 PWQ_LIB := build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so
 KQUEUE_LIB := build/libkqueue/libs/armeabi/libkqueue.so
 
+
 .PHONY : clean
 
 all: check-environment clean build ndk-build
@@ -51,10 +52,13 @@ build:
 
 	# libkqueue
 	cp -R libkqueue build
+	cp overlay/libkqueue/Android.mk build/libkqueue
 	cp -R overlay/libkqueue/jni build/libkqueue
+	cp -R overlay/libkqueue/test/jni build/libkqueue/test
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-private.diff
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-timer.diff
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-tls.diff
+	cd build/libkqueue/test && patch -p0 < ../../../patch/kqueue-test.diff
 
 	# libdispatch
 	cp -R libdispatch-0* build/libdispatch
@@ -67,8 +71,18 @@ $(PWQ_LIB): build
 	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
 
 $(KQUEUE_LIB): build
-	cd build/libkqueue && ndk-build TARGET_PLATFORM=android-14
+	cd build/libkqueue && ndk-build NDK_PROJECT_PATH=.
 
+# Run all unit tests
+check: check-kqueue
+
+# Run libkqueue unit tests
+check-kqueue:
+	adb push build/libkqueue/libs/armeabi/libkqueue.so /data
+	adb push build/libkqueue/libs/armeabi/kqtest /data
+	adb shell LD_LIBRARY_PATH=/data /data/kqtest
+	adb shell rm /data/kqtest /data/libkqueue.so
+	
 ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
 
  	# FIXME: fails due to missing atomics

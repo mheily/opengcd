@@ -19,6 +19,6 @@ include $(CLEAR_VARS)
 TARGET_PLATFROM := android-14
 LOCAL_MODULE    := libkqueue
 LOCAL_CFLAGS    += -Iinclude -I./src/common
-LOCAL_SRC_FILES := ../src/common/filter.c ../src/common/knote.c ../src/common/kevent.c ../src/common/kqueue.c ../src/posix/kevent.c ../src/linux/eventfd.c ../src/posix/signal.c ../src/linux/proc.c ../src/linux/socket.c ../src/linux/timer.c ../src/posix/user.c ../src/linux/vnode.c 
+LOCAL_SRC_FILES := ../src/common/filter.c ../src/common/knote.c ../src/common/kevent.c ../src/common/kqueue.c ../src/posix/kevent.c ../src/linux/eventfd.c ../src/posix/signal.c ../src/linux/proc.c ../src/linux/socket.c ../src/posix/timer.c ../src/posix/user.c ../src/linux/vnode.c 
 
 include $(BUILD_SHARED_LIBRARY)

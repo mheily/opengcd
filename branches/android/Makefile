@@ -53,6 +53,8 @@ build:
 	cp -R libkqueue build
 	cp -R overlay/libkqueue/jni build/libkqueue
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-private.diff
+	cd build/libkqueue && patch -p0 < ../../patch/kqueue-timer.diff
+	cd build/libkqueue && patch -p0 < ../../patch/kqueue-tls.diff
 
 	# libdispatch
 	cp -R libdispatch-0* build/libdispatch

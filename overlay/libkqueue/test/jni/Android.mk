@@ -12,13 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
 TARGET_PLATFROM := android-14
-LOCAL_MODULE    := libkqueue
-LOCAL_CFLAGS    += -Iinclude -I./src/common
-LOCAL_SRC_FILES := ../src/common/filter.c ../src/common/knote.c ../src/common/kevent.c ../src/common/kqueue.c ../src/posix/kevent.c ../src/linux/eventfd.c ../src/posix/signal.c ../src/linux/proc.c ../src/linux/socket.c ../src/posix/timer.c ../src/posix/user.c ../src/linux/vnode.c 
+LOCAL_MODULE    := kqtest
+LOCAL_CFLAGS    += -I../include
+LOCAL_SRC_FILES := ../main.c ../kevent.c ../test.c ../proc.c ../read.c ../signal.c ../timer.c ../vnode.c
 
-include $(BUILD_SHARED_LIBRARY)
+# maybe need?
+#cflags="-g -O0 -Wall -Werror"
+#ldadd="-lpthread -lrt"
+
+# XXX-WORKAROUND - adding TARGET_PLATFORM to ndk-build causes __ANDROID_API__ to be undefined
+LOCAL_CFLAGS    += -D__ANDROID_API__=14
+
+include $(BUILD_EXECUTABLE)

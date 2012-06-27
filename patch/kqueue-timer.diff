@@ -1,0 +1,55 @@
+Index: src/posix/timer.c
+===================================================================
+--- src/posix/timer.c	(revision 553)
++++ src/posix/timer.c	(working copy)
+@@ -55,8 +55,11 @@
+     ssize_t         cnt;
+     bool            cts = true;     /* Clear To Send */
+     char            buf[1];
++	int rv;
+ 
++#if 0
+     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
++#endif
+ 
+     /* Copyin the request */
+     memcpy(&sr, arg, sizeof(sr));
+@@ -70,16 +73,19 @@
+     req.tv_sec = sr.interval / 1000;
+     req.tv_nsec = (sr.interval % 1000) * 1000000;
+ 
+-    /* Block all signals */
++    /* Block all signals except SIGFPE which is used for thread termination */
+     sigfillset(&mask);
++	sigdelset(&mask, SIGFPE);
+     (void) pthread_sigmask(SIG_BLOCK, &mask, NULL);
+ 
+     for (;;) {
+ 
+         /* Sleep */
+-        if (nanosleep(&req, &rem) < 0) {
+-            //TODO: handle spurious wakeups
+-            dbg_perror("nanosleep(2)");
++		rv = nanosleep(&req, &rem);
++        if (rv < 0) {
++			/* Assume that SIGFPE was delivered.. */
++			if (errno == EINTR)
++				break;
+         }
+         si.counter++;
+         dbg_printf(" -------- sleep over (CTS=%d)----------", cts);
+@@ -152,11 +158,11 @@
+ static int
+ _timer_delete(struct knote *kn)
+ {
+-    if (pthread_cancel(kn->data.tid) != 0) {
+-        /* Race condition: sleeper_thread exits before it is cancelled */
++    if (pthread_kill(kn->data.tid, SIGFPE) != 0) {
++        /* Race condition: sleeper_thread exits before it is killed */
+         if (errno == ENOENT)
+             return (0);
+-        dbg_perror("pthread_cancel(3)");
++        dbg_perror("pthread_kill(3)");
+         return (-1);
+     }
+     return (0);

@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(call my-dir)/..
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
@@ -21,3 +21,12 @@ LOCAL_MODULE    := libBlocksRuntime
 LOCAL_SRC_FILES := data.c runtime.c
 
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := brtest
+LOCAL_CFLAGS    += -fblocks
+LOCAL_SRC_FILES := ./test/main.c
+LOCAL_SHARED_LIBRARIES := libBlocksRuntime
+
+include $(BUILD_EXECUTABLE)

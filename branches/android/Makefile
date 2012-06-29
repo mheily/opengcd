@@ -44,6 +44,7 @@ build:
 	# libBlocksRuntime
 	cp -R libBlocksRuntime build
 	cp -R overlay/libBlocksRuntime/config.h build/libBlocksRuntime
+	cp overlay/libBlocksRuntime/Android.mk build/libBlocksRuntime
 	cp -R overlay/libBlocksRuntime/jni build/libBlocksRuntime
 
 	# libpthread_workqueue
@@ -65,7 +66,7 @@ build:
 	#TODO:cp -R overlay/libdispatch/jni build/libdispatch
 
 $(BLOCKS_RUNTIME): build
-	cd build/libBlocksRuntime && ndk-build
+	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
 
 $(PWQ_LIB): build
 	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
@@ -74,7 +75,13 @@ $(KQUEUE_LIB): build
 	cd build/libkqueue && ndk-build NDK_PROJECT_PATH=.
 
 # Run all unit tests
-check: check-kqueue
+check: check-blocks check-kqueue
+
+# Run libBlocksRuntime unit tests
+check-blocks:
+	adb push build/libBlocksRuntime/libs/armeabi/libBlocksRuntime.so /data
+	adb push build/libBlocksRuntime/libs/armeabi/brtest /data
+	adb shell LD_LIBRARY_PATH=/data /data/brtest
 
 # Run libkqueue unit tests
 check-kqueue:
@@ -103,4 +110,4 @@ ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
 
 clean:
 	rm -rf build
-	adb shell rm /data/kqtest /data/libkqueue.so
+#TODO:adb shell rm /data/kqtest /data/libkqueue.so

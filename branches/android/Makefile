@@ -50,6 +50,7 @@ build:
 	# libpthread_workqueue
 	cp -R libpthread_workqueue build
 	cp -R overlay/libpthread_workqueue/jni build/libpthread_workqueue
+	cp overlay/libpthread_workqueue/Android.mk build/libpthread_workqueue
 	cd build/libpthread_workqueue && patch -p0 < ../../patch/getloadavg.diff
 
 	# libkqueue
@@ -69,7 +70,7 @@ $(BLOCKS_RUNTIME): build
 	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
 
 $(PWQ_LIB): build
-	cd build/libpthread_workqueue && ndk-build TARGET_PLATFORM=android-14
+	cd build/libpthread_workqueue && ndk-build NDK_PROJECT_PATH=.
 
 $(KQUEUE_LIB): build
 	cd build/libkqueue && ndk-build NDK_PROJECT_PATH=.
@@ -82,6 +83,12 @@ check-blocks:
 	adb push build/libBlocksRuntime/libs/armeabi/libBlocksRuntime.so /data
 	adb push build/libBlocksRuntime/libs/armeabi/brtest /data
 	adb shell LD_LIBRARY_PATH=/data /data/brtest
+
+# Run libpthread_workqueue unit tests
+check-pwq: $(PWQ_LIB)
+	adb push build/libpthread_workqueue/libs/armeabi/libBlocksRuntime.so /data
+	adb push build/libpthread_workqueue/libs/armeabi/pwqtest /data
+	adb shell LD_LIBRARY_PATH=/data /data/pwqtest
 
 # Run libkqueue unit tests
 check-kqueue:

@@ -86,7 +86,7 @@ check-blocks:
 
 # Run libpthread_workqueue unit tests
 check-pwq: $(PWQ_LIB)
-	adb push build/libpthread_workqueue/libs/armeabi/libBlocksRuntime.so /data
+	adb push build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so /data
 	adb push build/libpthread_workqueue/libs/armeabi/pwqtest /data
 	adb shell LD_LIBRARY_PATH=/data /data/pwqtest
 

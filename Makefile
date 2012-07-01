@@ -91,10 +91,16 @@ check-pwq: $(PWQ_LIB)
 	adb shell LD_LIBRARY_PATH=/data /data/pwqtest
 
 # Run libkqueue unit tests
-check-kqueue:
+check-kqueue: $(KQUEUE_LIB)
 	adb push build/libkqueue/libs/armeabi/libkqueue.so /data
 	adb push build/libkqueue/libs/armeabi/kqtest /data
 	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes /data/kqtest
+
+# Run libdispatch unit tests
+check-libdispatch: $(DISPATCH_LIB)
+	adb push build/libdispatch/libs/armeabi/libdispatch.so /data
+	adb push build/libdispatch/libs/armeabi/disptest /data
+	adb shell LD_LIBRARY_PATH=/data /data/disptest
 
 # FIXME: use ndk-gdb instead, this is broken
 # Debug the libkqueue unit tests

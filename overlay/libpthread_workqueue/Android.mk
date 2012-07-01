@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(call my-dir)/..
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
@@ -25,3 +25,15 @@ LOCAL_SRC_FILES := src/api.c src/posix/manager.c src/posix/thread_info.c src/wit
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := pwqtest
+LOCAL_CFLAGS    += -Iinclude
+LOCAL_SRC_FILES := ./testing/api/test.c
+LOCAL_SHARED_LIBRARIES := libpthread_workqueue
+
+# XXX-WORKAROUND - adding APP_PLATFORM to ndk-build causes __ANDROID_API__ to be undefined
+LOCAL_CFLAGS    += -D__ANDROID_API__=14
+
+include $(BUILD_EXECUTABLE)

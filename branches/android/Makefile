@@ -64,7 +64,8 @@ build:
 
 	# libdispatch
 	cp -R libdispatch-0* build/libdispatch
-	#TODO:cp -R overlay/libdispatch/jni build/libdispatch
+	cp overlay/libdispatch/Android.mk build/libdispatch
+	cp -R overlay/libdispatch/jni build/libdispatch
 
 $(BLOCKS_RUNTIME): build
 	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
@@ -108,15 +109,16 @@ check-libdispatch: $(DISPATCH_LIB)
 #	adb forward tcp:5039 tcp:5039
 #	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes gdbserver :5039 /data/kqtest
 	
-# FIXME: fails due to missing atomics
 $(DISPATCH_LIB): build
-	cd build/libdispatch && autoreconf -fvi && \
-          CC=$(CC) \
-	  CPPFLAGS="-I$(NDK_INCLUDE)" \
- 	  CFLAGS="-nostdlib" \
-	  LIBS="" \
-          LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
- 	  ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi 
+	cd build/libdispatch && ndk-build NDK_PROJECT_PATH=.
+# FIXME: autoconf gets stuck in an infinite loop
+#	cd build/libdispatch && autoreconf -fvi && \
+#          CC=$(CC) \
+#	  CPPFLAGS="-I$(NDK_INCLUDE)" \
+# 	  CFLAGS="-nostdlib" \
+#	  LIBS="" \
+#          LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
+#    ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi && \
 
 ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
 #TODO: DISPATCH_LIB

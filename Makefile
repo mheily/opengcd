@@ -66,6 +66,10 @@ build:
 	cp -R libdispatch-0* build/libdispatch
 	cp overlay/libdispatch/Android.mk build/libdispatch
 	cp -R overlay/libdispatch/jni build/libdispatch
+	cd build/libdispatch && patch -p0 < ../../patch/dispatch-workaround.diff
+    # NOTE : this is from a Debian system, not an Android system..
+	cp overlay/libdispatch/config.h build/libdispatch/config
+
 
 $(BLOCKS_RUNTIME): build
 	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
@@ -109,7 +113,8 @@ check-libdispatch: $(DISPATCH_LIB)
 #	adb forward tcp:5039 tcp:5039
 #	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes gdbserver :5039 /data/kqtest
 	
-$(DISPATCH_LIB): build
+$(DISPATCH_LIB): build $(PWQ_LIB) $(KQUEUE_LIB)
+	cp $(PWQ_LIB) $(KQUEUE_LIB) build/libdispatch
 	cd build/libdispatch && ndk-build NDK_PROJECT_PATH=.
 # FIXME: autoconf gets stuck in an infinite loop
 #	cd build/libdispatch && autoreconf -fvi && \

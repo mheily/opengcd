@@ -18,7 +18,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libdispatch
-LOCAL_CFLAGS    += -I./src -D__ANDROID_API__=14
+LOCAL_CFLAGS    += -I./src -D__ANDROID_API__=14 -nostdlib -I../libkqueue/include -I../libpthread_workqueue/include
 LOCAL_SRC_FILES := src/apply.c \
                    src/benchmark.c	\
                    src/object.c	\
@@ -36,8 +36,11 @@ LOCAL_SRC_FILES := src/apply.c \
 # XXX-WORKAROUND - adding TARGET_PLATFORM to ndk-build causes __ANDROID_API__ to be undefined
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
+LOCAL_SHARED_LIBRARIES := pwq-prebuilt kqueue-prebuilt
+
 include $(BUILD_SHARED_LIBRARY)
 
+### TODO -- dispatch testsuite
 ###include $(CLEAR_VARS)
 ###
 ###LOCAL_MODULE    := pwqtest
@@ -49,3 +52,22 @@ include $(BUILD_SHARED_LIBRARY)
 ###LOCAL_CFLAGS    += -D__ANDROID_API__=14
 ###
 ###include $(BUILD_EXECUTABLE)
+
+
+#
+# Bring in libpwq as a prebuilt-library
+#
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := pwq-prebuilt
+LOCAL_SRC_FILES := libpthread_workqueue.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+#
+# Bring in libkqueue as a prebuilt-library
+#
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := kqueue-prebuilt
+LOCAL_SRC_FILES := libkqueue.so
+include $(PREBUILT_SHARED_LIBRARY)

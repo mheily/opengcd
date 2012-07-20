@@ -30,7 +30,7 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 .PHONY : clean
 
-all: check-environment clean build ndk-build
+all: check-environment build ndk-build
 
 check-environment:
 	test -x $(CC)
@@ -41,19 +41,19 @@ check-environment:
 build:
 	mkdir build
 
-	# libBlocksRuntime
+build/libBlocksRuntime: build
 	cp -R libBlocksRuntime build
 	cp -R overlay/libBlocksRuntime/config.h build/libBlocksRuntime
 	cp overlay/libBlocksRuntime/Android.mk build/libBlocksRuntime
 	cp -R overlay/libBlocksRuntime/jni build/libBlocksRuntime
 
-	# libpthread_workqueue
+build/libpthread_workqueue: build
 	cp -R libpthread_workqueue build
 	cp -R overlay/libpthread_workqueue/jni build/libpthread_workqueue
 	cp overlay/libpthread_workqueue/Android.mk build/libpthread_workqueue
 	cd build/libpthread_workqueue && patch -p0 < ../../patch/getloadavg.diff
 
-	# libkqueue
+build/libkqueue: build
 	cp -R libkqueue build
 	cp overlay/libkqueue/Android.mk build/libkqueue
 	cp -R overlay/libkqueue/jni build/libkqueue
@@ -62,22 +62,22 @@ build:
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-tls.diff
 	cd build/libkqueue/test && patch -p0 < ../../../patch/kqueue-test.diff
 
-	# libdispatch
+build/libdispatch: build
 	cp -R libdispatch-0* build/libdispatch
 	cp overlay/libdispatch/Android.mk build/libdispatch
 	cp -R overlay/libdispatch/jni build/libdispatch
 	cd build/libdispatch && patch -p0 < ../../patch/dispatch-workaround.diff
-    # NOTE : this is from a Debian system, not an Android system..
+	cd build/libdispatch && patch -p0 < ../../patch/dispatch-spawn.diff
+	# NOTE : this is from a Debian system, not an Android system..
 	cp overlay/libdispatch/config.h build/libdispatch/config
 
-
-$(BLOCKS_RUNTIME): build
+$(BLOCKS_RUNTIME): build/libBlocksRuntime
 	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
 
-$(PWQ_LIB): build
+$(PWQ_LIB): build/libpthread_workqueue
 	cd build/libpthread_workqueue && ndk-build NDK_PROJECT_PATH=.
 
-$(KQUEUE_LIB): build
+$(KQUEUE_LIB): build/libkqueue
 	cd build/libkqueue && ndk-build NDK_PROJECT_PATH=.
 
 # Run all unit tests
@@ -102,10 +102,13 @@ check-kqueue: $(KQUEUE_LIB)
 	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes /data/kqtest
 
 # Run libdispatch unit tests
-check-libdispatch: $(DISPATCH_LIB)
+check-libdispatch:
 	adb push build/libdispatch/libs/armeabi/libdispatch.so /data
-	adb push build/libdispatch/libs/armeabi/disptest /data
-	adb shell LD_LIBRARY_PATH=/data /data/disptest
+	cd build/libdispatch/libs/armeabi ; for x in dispatch-* ; \
+		do \
+			adb push $$x /data ; \
+	        adb shell LD_LIBRARY_PATH=/data /data/$$x ; \
+		done 
 
 # FIXME: use ndk-gdb instead, this is broken
 # Debug the libkqueue unit tests
@@ -113,8 +116,8 @@ check-libdispatch: $(DISPATCH_LIB)
 #	adb forward tcp:5039 tcp:5039
 #	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes gdbserver :5039 /data/kqtest
 	
-$(DISPATCH_LIB): build $(PWQ_LIB) $(KQUEUE_LIB)
-	cp $(PWQ_LIB) $(KQUEUE_LIB) build/libdispatch
+$(DISPATCH_LIB): build/libdispatch $(PWQ_LIB) $(KQUEUE_LIB)
+	cp $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB) build/libdispatch
 	cd build/libdispatch && ndk-build NDK_PROJECT_PATH=.
 # FIXME: autoconf gets stuck in an infinite loop
 #	cd build/libdispatch && autoreconf -fvi && \
@@ -125,8 +128,7 @@ $(DISPATCH_LIB): build $(PWQ_LIB) $(KQUEUE_LIB)
 #          LDFLAGS="-Wl,-rpath-link=$(NDK_LIB) -L$(NDK_LIB)" \
 #    ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --target=arm-linux-androideabi && \
 
-ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB)
-#TODO: DISPATCH_LIB
+ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB) $(DISPATCH_LIB)
 
 clean:
 	rm -rf build

@@ -72,13 +72,13 @@ build/libdispatch: build
 	cp overlay/libdispatch/config.h build/libdispatch/config
 
 $(BLOCKS_RUNTIME): build/libBlocksRuntime
-	cd build/libBlocksRuntime && ndk-build NDK_PROJECT_PATH=.
+	cd build/libBlocksRuntime && $(NDK_BUILD) NDK_PROJECT_PATH=.
 
 $(PWQ_LIB): build/libpthread_workqueue
-	cd build/libpthread_workqueue && ndk-build NDK_PROJECT_PATH=.
+	cd build/libpthread_workqueue && $(NDK_BUILD) NDK_PROJECT_PATH=.
 
 $(KQUEUE_LIB): build/libkqueue
-	cd build/libkqueue && ndk-build NDK_PROJECT_PATH=.
+	cd build/libkqueue && $(NDK_BUILD) NDK_PROJECT_PATH=.
 
 # Run all unit tests
 check: check-blocks check-kqueue
@@ -118,7 +118,7 @@ check-libdispatch:
 	
 $(DISPATCH_LIB): build/libdispatch $(PWQ_LIB) $(KQUEUE_LIB)
 	cp $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB) build/libdispatch
-	cd build/libdispatch && ndk-build NDK_PROJECT_PATH=.
+	cd build/libdispatch && $(NDK_BUILD) NDK_PROJECT_PATH=.
 # FIXME: autoconf gets stuck in an infinite loop
 #	cd build/libdispatch && autoreconf -fvi && \
 #          CC=$(CC) \

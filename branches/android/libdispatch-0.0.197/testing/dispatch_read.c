@@ -37,7 +37,11 @@ static size_t bytes_read;
 
 int main(void)
 {
+#ifdef __ANDROID_API__
+	const char *path = "/system/usr/share/zoneinfo/zoneinfo.dat";
+#else
 	const char *path = "/usr/share/dict/words";
+#endif
 	struct stat sb;
 
 	test_start("Dispatch Source Read");

@@ -50,12 +50,14 @@ build/libBlocksRuntime: build
 build/libpthread_workqueue: build
 	cp -R libpthread_workqueue build
 	cp -R overlay/libpthread_workqueue/jni build/libpthread_workqueue
+	cp -R overlay/libpthread_workqueue/config.h build/libpthread_workqueue
 	cp overlay/libpthread_workqueue/Android.mk build/libpthread_workqueue
 	cd build/libpthread_workqueue && patch -p0 < ../../patch/getloadavg.diff
 
 build/libkqueue: build
 	cp -R libkqueue build
 	cp overlay/libkqueue/Android.mk build/libkqueue
+	cp overlay/libkqueue/config.h build/libkqueue
 	cp -R overlay/libkqueue/jni build/libkqueue
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-private.diff
 	cd build/libkqueue && patch -p0 < ../../patch/kqueue-timer.diff

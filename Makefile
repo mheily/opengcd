@@ -14,12 +14,23 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+#
+# Set the paths to the NDK and SDK here
+#
+
 NDK := ~/android/android-ndk-r8
+SDK := ~/android-sdks/
+
+#
+# You should not need to modify any variables below here.
+#
+
 NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86
 NDK_BUILD   := $(NDK)/ndk-build
 NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
+ADB         := $(SDK)/adb
 
 # Convenience variables for output objects
 BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
@@ -87,29 +98,29 @@ check: check-blocks check-kqueue
 
 # Run libBlocksRuntime unit tests
 check-blocks:
-	adb push build/libBlocksRuntime/libs/armeabi/libBlocksRuntime.so /data
-	adb push build/libBlocksRuntime/libs/armeabi/brtest /data
-	adb shell LD_LIBRARY_PATH=/data /data/brtest
+	$(ADB) push build/libBlocksRuntime/libs/armeabi/libBlocksRuntime.so /data
+	$(ADB) push build/libBlocksRuntime/libs/armeabi/brtest /data
+	$(ADB) shell LD_LIBRARY_PATH=/data /data/brtest
 
 # Run libpthread_workqueue unit tests
 check-pwq: $(PWQ_LIB)
-	adb push build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so /data
-	adb push build/libpthread_workqueue/libs/armeabi/pwqtest /data
-	adb shell LD_LIBRARY_PATH=/data /data/pwqtest
+	$(ADB) push build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so /data
+	$(ADB) push build/libpthread_workqueue/libs/armeabi/pwqtest /data
+	$(ADB) shell LD_LIBRARY_PATH=/data /data/pwqtest
 
 # Run libkqueue unit tests
 check-kqueue: $(KQUEUE_LIB)
-	adb push build/libkqueue/libs/armeabi/libkqueue.so /data
-	adb push build/libkqueue/libs/armeabi/kqtest /data
-	adb shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes /data/kqtest
+	$(ADB) push build/libkqueue/libs/armeabi/libkqueue.so /data
+	$(ADB) push build/libkqueue/libs/armeabi/kqtest /data
+	$(ADB) shell LD_LIBRARY_PATH=/data TMPDIR=/data KQUEUE_DEBUG=yes /data/kqtest
 
 # Run libdispatch unit tests
 check-libdispatch:
-	adb push build/libdispatch/libs/armeabi/libdispatch.so /data
+	$(ADB) push build/libdispatch/libs/armeabi/libdispatch.so /data
 	cd build/libdispatch/libs/armeabi ; for x in dispatch-* ; \
 		do \
-			adb push $$x /data ; \
-	        adb shell LD_LIBRARY_PATH=/data /data/$$x ; \
+			$(ADB) push $$x /data ; \
+	        $(ADB) shell LD_LIBRARY_PATH=/data /data/$$x ; \
 		done 
 
 # FIXME: use ndk-gdb instead, this is broken

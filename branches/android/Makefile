@@ -18,14 +18,14 @@
 # Set the paths to the NDK and SDK here
 #
 
-NDK := ~/android/android-ndk-r8
+NDK := ~/src/android-ndk-r8b
 SDK := ~/android-sdks/
 
 #
 # You should not need to modify any variables below here.
 #
 
-NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86
+NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.6/prebuilt/darwin-x86
 NDK_BUILD   := $(NDK)/ndk-build
 NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
@@ -98,7 +98,7 @@ $(KQUEUE_LIB): build/libkqueue
 	cd build/libkqueue && $(NDK_BUILD) NDK_PROJECT_PATH=.
 
 # Run all unit tests
-check: check-blocks check-kqueue
+check: check-blocks check-kqueue check-pwq check-libdispatch
 
 # Run libBlocksRuntime unit tests
 check-blocks:

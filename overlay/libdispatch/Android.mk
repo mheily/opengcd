@@ -104,6 +104,9 @@ LOCAL_SRC_FILES := testing/dispatch_priority.c \
 LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
+# Workaround for error compiling <TargetConditional.h>
+LOCAL_CFLAGS    += -DTARGET_CPU_ARM=1
+
 include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
@@ -116,17 +119,23 @@ LOCAL_SRC_FILES := testing/dispatch_priority.c \
 LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
+# Workaround for error compiling <TargetConditional.h>
+LOCAL_CFLAGS    += -DTARGET_CPU_ARM=1
+
 include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := dispatch-starfish
 LOCAL_CFLAGS    += -Iinclude -nostdlib
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime $(LOCAL_PATH)/../libpthread_workqueue/include
 LOCAL_SRC_FILES := testing/dispatch_starfish.c \
                    testing/dispatch_test.c
 LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
+
+# Workaround for error compiling <TargetConditional.h>
+LOCAL_CFLAGS    += -DTARGET_CPU_ARM=1
 
 include $(BUILD_EXECUTABLE)
 

@@ -30,7 +30,7 @@ NDK_BUILD   := $(NDK)/ndk-build
 NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
-ADB         := $(SDK)/adb
+ADB         := $(SDK)/platform-tools/adb
 
 # Convenience variables for output objects
 BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
@@ -44,7 +44,11 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 all: check-environment build ndk-build
 
 check-environment:
+	test -x $(SDK)
+	test -x $(NDK)
 	test -x $(CC)
+	test -x $(ADB)
+	test -x $(NDK_TOOLCHAIN)
 	test -x $(NDK_BUILD)
 	test -x $(NDK_INCLUDE)
 	test -x $(NDK_LIB)

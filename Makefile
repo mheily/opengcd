@@ -43,6 +43,9 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 all: clang check-environment build ndk-build
 
+android-sdk-linux:
+	curl http://dl.google.com/android/android-sdk_r20.0.1-linux.tgz | tar zxf -
+
 clang:
 	# Checkout LLVM
 	#

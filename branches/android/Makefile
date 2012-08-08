@@ -18,14 +18,14 @@
 # Set the paths to the NDK and SDK here
 #
 
-NDK := ~/src/android-ndk-r8b
+NDK := ~/android/android-ndk-r8
 SDK := ~/android-sdks/
 
 #
 # You should not need to modify any variables below here.
 #
 
-NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.6/prebuilt/darwin-x86
+NDK_TOOLCHAIN := $(NDK)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86
 NDK_BUILD   := $(NDK)/ndk-build
 NDK_INCLUDE := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
@@ -41,7 +41,31 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 .PHONY : clean
 
-all: check-environment build ndk-build
+all: clang check-environment build ndk-build
+
+clang:
+	# Checkout LLVM
+	#
+	mkdir clang
+	cd clang && svn co -q http://llvm.org/svn/llvm-project/llvm/trunk llvm
+
+	#
+	# Checkout clang
+	#
+	cd clang/llvm/tools && svn co -q http://llvm.org/svn/llvm-project/cfe/trunk clang
+
+	#
+	# Checkout compiler-rt
+	#
+	cd clang/llvm/projects && svn co -q http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
+
+	#
+	# Build everything 
+	#
+	mkdir clang/build 
+	cd clang/build && \
+	../llvm/configure --target=arm-linux-androideabi && \
+	make
 
 check-environment:
 	test -x $(SDK)
@@ -147,6 +171,11 @@ $(DISPATCH_LIB): build/libdispatch $(PWQ_LIB) $(KQUEUE_LIB)
 
 ndk-build: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB) $(DISPATCH_LIB)
 
+# Combine all the headers into a single include/ directory
+#
+include: $(BLOCKS_RUNTIME) $(PWQ_LIB) $(KQUEUE_LIB) $(DISPATCH_LIB)
+	mkdir include
+    
 clean:
-	rm -rf build
+	rm -rf build include
 #TODO:adb shell rm /data/kqtest /data/libkqueue.so

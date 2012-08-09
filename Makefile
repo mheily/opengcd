@@ -95,7 +95,7 @@ clang:
 	mkdir clang/build 
 	cd clang/build && \
 	../llvm/configure --target=arm-linux-androideabi && \
-	make
+	make -j4
 
 check-environment:
 	test -x $(SDK)

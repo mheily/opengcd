@@ -41,7 +41,7 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 .PHONY : clean
 
-all: android-sdk android-ndk clang check-environment build ndk-build
+all: android-sdk android-ndk clang/build check-environment build ndk-build
 
 android-sdk-linux:
 	curl http://dl.google.com/android/android-sdk_r20.0.1-linux.tgz | tar zxf -
@@ -92,6 +92,7 @@ clang:
 	#
 	# Build everything 
 	#
+clang/build: clang
 	mkdir clang/build 
 	cd clang/build && \
 	../llvm/configure --target=arm-linux-androideabi && \

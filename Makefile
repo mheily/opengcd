@@ -41,7 +41,7 @@ DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
 
 .PHONY : clean
 
-all: android-sdk clang check-environment build ndk-build
+all: android-sdk android-ndk clang check-environment build ndk-build
 
 android-sdk-linux:
 	curl http://dl.google.com/android/android-sdk_r20.0.1-linux.tgz | tar zxf -
@@ -58,6 +58,20 @@ android-sdk:
         ;; \
     esac
     
+android-ndk-r8b:
+	curl http://dl.google.com/android/ndk/android-ndk-r8b-linux-x86.tar.bz2 | tar jxf -
+
+android-ndk:
+	case `uname` in \
+      Linux) \
+        make android-ndk-r8b ; \
+        ln -s android-ndk-r8b android-ndk ; \
+        ;; \
+      *) \
+        echo 'Unsupported OS' ; \
+        exit 1 ; \
+        ;; \
+    esac
 
 clang:
 	# Checkout LLVM

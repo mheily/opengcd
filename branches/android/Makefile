@@ -98,12 +98,20 @@ android-ndk/toolchains/$(TOOLCHAIN_ID)/clang: android-ndk clang/build
 	ln -sf clang $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
 	ln -sf clang $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-g++
 
-#   1- Android SDK Tools, revision 20.0.3
-#   2- Android SDK Platform-tools, revision 14
+# Download the necessary SDK components (including ADB)
 $(ADB):
 	$(SDK)/tools/android update sdk --no-ui -t platform-tools
 	$(SDK)/tools/android update sdk --no-ui -t tools
-    
+	$(SDK)/tools/android update sdk --no-ui -t android-16
+	$(SDK)/tools/android update sdk --no-ui -t sysimg-16
+
+# NOTE: must run manually for now
+avd: $(ADB)
+	echo 'no' | $(SDK)/tools/android create avd -n avd0 -t 1 -f
+
+# NOTE: must run manually for now
+avd-start: $(ADB)
+	$(SDK)/tools/emulator -no-window -avd avd0 &
 
 clang:
 	# Checkout LLVM

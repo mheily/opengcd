@@ -31,7 +31,7 @@ ifeq ($(UNAME), Linux)
 NDK_TOOLCHAIN := $(NDK)/toolchains/$(TOOLCHAIN_ID)/prebuilt/linux-x86
 endif
 
-NDK_BUILD   := $(NDK)/ndk-build V=1
+NDK_BUILD   := $(NDK)/ndk-build V=1 NDK_DEBUG=1
 NDK_PREFIX := $(NDK)/platforms/android-14/arch-arm/usr
 NDK_LIB     := $(NDK)/platforms/android-14/arch-arm/usr/lib/
 CC          := $(NDK_TOOLCHAIN)/bin/arm-linux-androideabi-gcc
@@ -39,7 +39,7 @@ ADB         := $(SDK)/platform-tools/adb
 
 
 # Convenience variables for output objects
-BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.so
+BLOCKS_RUNTIME := ./build/libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.a
 PWQ_LIB := build/libpthread_workqueue/libs/armeabi/libpthread_workqueue.so
 KQUEUE_LIB := build/libkqueue/libs/armeabi/libkqueue.so
 DISPATCH_LIB := build/libdispatch/libs/armeabi/libdispatch.so
@@ -197,7 +197,6 @@ check: check-blocks check-kqueue check-pwq check-libdispatch
 
 # Run libBlocksRuntime unit tests
 check-blocks:
-	$(ADB) push build/libBlocksRuntime/libs/armeabi/libBlocksRuntime.so /data
 	$(ADB) push build/libBlocksRuntime/libs/armeabi/brtest /data
 	$(ADB) shell LD_LIBRARY_PATH=/data /data/brtest
 

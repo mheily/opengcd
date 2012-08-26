@@ -37,7 +37,9 @@ LOCAL_SRC_FILES := src/apply.c \
 # XXX-WORKAROUND - adding TARGET_PLATFORM to ndk-build causes __ANDROID_API__ to be undefined
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
-LOCAL_SHARED_LIBRARIES := pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+my_STATIC_LIBRARIES := blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := pwq-prebuilt kqueue-prebuilt
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -52,7 +54,8 @@ LOCAL_MODULE    := dispatch-api
 LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_SRC_FILES := testing/dispatch_api.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
@@ -64,7 +67,8 @@ LOCAL_MODULE    := dispatch-c99
 LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_SRC_FILES := testing/dispatch_c99.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
@@ -76,7 +80,8 @@ LOCAL_MODULE    := dispatch-cascade
 LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_SRC_FILES := testing/dispatch_cascade.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
@@ -88,7 +93,8 @@ LOCAL_MODULE    := dispatch-debug
 LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_SRC_FILES := testing/dispatch_debug.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 
@@ -101,7 +107,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_priority.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 # Workaround for error compiling <TargetConditional.h>
@@ -116,7 +123,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -DUSE_SET_TARGET_QUEUE=1
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_priority.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 # Workaround for error compiling <TargetConditional.h>
@@ -131,7 +139,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime $(LOCAL_PATH)/../libpthread_workqueue/include
 LOCAL_SRC_FILES := testing/dispatch_starfish.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 # Workaround for error compiling <TargetConditional.h>
@@ -146,7 +155,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_after.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -158,7 +168,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_apply.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -170,7 +181,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_drift.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -182,7 +194,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_group.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -194,7 +207,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_pingpong.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -220,7 +234,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_readsync.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -232,7 +247,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_sema.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -244,7 +260,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_timer_bit31.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -256,7 +273,8 @@ LOCAL_CFLAGS    += -Iinclude -nostdlib -fblocks
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libBlocksRuntime
 LOCAL_SRC_FILES := testing/dispatch_timer_bit63.c \
                    testing/dispatch_test.c
-LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt blocks-prebuilt
+LOCAL_STATIC_LIBRARIES := $(my_STATIC_LIBRARIES)
+LOCAL_SHARED_LIBRARIES := libdispatch pwq-prebuilt kqueue-prebuilt
 LOCAL_CFLAGS    += -D__ANDROID_API__=14
 
 include $(BUILD_EXECUTABLE)
@@ -289,5 +307,5 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := blocks-prebuilt
-LOCAL_SRC_FILES := libBlocksRuntime.so
-include $(PREBUILT_SHARED_LIBRARY)
+LOCAL_SRC_FILES := libBlocksRuntime.a
+include $(PREBUILT_STATIC_LIBRARY)

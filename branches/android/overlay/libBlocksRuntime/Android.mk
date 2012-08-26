@@ -20,13 +20,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := libBlocksRuntime
 LOCAL_SRC_FILES := data.c runtime.c
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := brtest
 LOCAL_CFLAGS    += -fblocks
 LOCAL_SRC_FILES := ./test/main.c
-LOCAL_SHARED_LIBRARIES := libBlocksRuntime
+LOCAL_STATIC_LIBRARIES := libBlocksRuntime
 
 include $(BUILD_EXECUTABLE)

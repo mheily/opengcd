@@ -1,0 +1,10 @@
+--- configure.ac.OLD	2012-09-05 21:47:00.000000000 -0400
++++ configure.ac	2012-09-05 21:47:32.000000000 -0400
+@@ -219,6 +219,7 @@
+ # We support both Mach semaphores and POSIX semaphores; if the former are
+ # available, prefer them.
+ #
++have_sem_init="true"    # Android has these but does not expose them publicly
+ AC_MSG_CHECKING([what semaphore type to use]);
+ AS_IF([test "x$have_mach" = "xtrue"],
+   [AC_DEFINE(USE_MACH_SEM, 1,[Define to use Mach semaphores])

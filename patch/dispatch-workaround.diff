@@ -33,7 +33,7 @@ Index: src/shims/getprogname.h
  getprogname(void)
  {
 -# if HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
-+# if defined(__ANDROID_API__)
++# if defined(ANDROID)
 +	return "FIXME -- TODO";
 +# elif HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
      return program_invocation_short_name;

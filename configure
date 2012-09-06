@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+#
+# Copyright (c) 2012 Mark Heily <mark@heily.com>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+$VERBOSE = true
+$LOAD_PATH << 'makeconf'
+
+require 'makeconf'
+
+# Return an authenticated or anonymous SVN URI
+def svn(path)
+  if ENV['USER'] == 'mheily'
+    'svn+ssh://heily.com/home/mheily/svn/' + path
+  else
+    'svn://mark.heily.com/' + path
+  end
+end
+
+cc = CCompiler.new(
+  :search => %w{clang}
+)
+
+project = Project.new(
+  :id => 'opengcd',
+  :version => '0.1',
+  :cc => cc
+)
+
+project.add(
+  ExternalProject.new(
+       :id => 'libBlocksRuntime',
+       :uri => svn('libBlocksRuntime/trunk')
+      ),
+  ExternalProject.new(
+       :id => 'libkqueue',
+       :uri => svn('libkqueue/branches/stable')
+      ),
+  ExternalProject.new(
+       :id => 'libpthread_workqueue',
+       :uri => svn('libpthread_workqueue/trunk')
+      ),
+  Target.new('libdispatch', [], [
+      # Use the same steps as the Debian build process
+      'tar zxf libdispatch_0\~svn197.orig.tar.gz',
+      'patch -p0 < patch/disable_dispatch_read.patch',
+      'patch -p0 < patch/libdispatch-r197_v2.patch',
+      'mv libdispatch-0~svn197 libdispatch',
+
+
+      # Extra stuff for Android
+      # Hopefully you have a recent copy of Autoconf that supports Android
+      'cd libdispatch && patch -p0 < ../patch/dispatch-workaround.diff',
+      'cd libdispatch && patch -p0 < ../patch/dispatch-spawn.diff',
+      'cd libdispatch && patch -p0 < ../patch/dispatch-atomic.diff',
+      'cd libdispatch && patch -p0 < ../patch/dispatch-semaphore.diff',
+      'cd libdispatch && patch -p0 < ../patch/dispatch-blocks.diff',
+      'cd libdispatch && patch -p0 < ../patch/dispatch-internal.diff',
+      'cd libdispatch && autoreconf -fvi',
+
+     'cd libdispatch && CC=$(CC)' +
+       ' CFLAGS="-nostdlib -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
+       ' LIBS="-lBlocksRuntime"' +
+       ' LDFLAGS="-Wl,-rpath-link=$(NDK_LIBDIR) -L$(NDK_LIBDIR) -L../libBlocksRuntime/obj/local/armeabi"' +
+       ' ./configure --host=arm-linux-androideabi'
+      ]),
+  Library.new(
+      :id => 'libdispatch',
+      :cflags => '-fblocks -D__BLOCKS__ -I./libdispatch -I./libdispatch/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
+      :ldadd => ['libBlocksRuntime/obj/local/armeabi/libBlocksRuntime_static.a',
+                 'libkqueue/obj/local/armeabi/libkqueue_static.a',
+                 'libpthread_workqueue/obj/local/armeabi/libpthread_workqueue_static.a'],
+      :sources => %w{ 
+         apply.c
+         benchmark.c
+         object.c
+         once.c
+         queue.c
+         queue_kevent.c
+         semaphore.c
+         source.c
+         source_kevent.c
+         time.c
+         shims/mach.c
+         shims/time.c
+         shims/tsd.c
+      }.map { |p| 'libdispatch/src/' + p }
+  )
+)
+
+# Require the use of an unofficial Clang 3.2-based toolchain for Android.
+if SystemType.host =~ /-androideabi$/
+  project.ndk_toolchain_version = '3.2'
+end
+
+Makeconf.configure(project)

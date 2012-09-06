@@ -1,0 +1,23 @@
+Building OpenGCD for Android
+----------------------------
+
+  1. In your NDK toolchains directory, copy the arm-linux-androideabi-4.6 toolchain to arm-linux-androideabi-3.2. Replace gcc with clang.
+
+
+  2. Run the configure script and provide the paths to your NDK and SDK. Example:
+
+     ./configure --host=arm-linux-androideabi \
+               --with-ndk=/home/mheily/src/android-ndk-r8b \
+               --with-sdk=/home/mheily/android-sdks
+
+  3. Unpack, patch, and configure libdispatch:
+
+        make libdispatch
+
+  4. Build everything
+
+        make
+
+  5. Run the unit tests
+
+        make check

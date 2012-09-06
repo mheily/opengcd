@@ -1,0 +1,17 @@
+Description: disable the dispatch_read unit test which needs libkqueue 2.0a
+Author: Mark Heily <mark@heily.com>
+
+
+Index: libdispatch-0~svn197/testing/dispatch_read.c
+===================================================================
+--- libdispatch-0~svn197.orig/testing/dispatch_read.c	2011-07-01 22:44:18.000000000 -0400
++++ libdispatch-0~svn197/testing/dispatch_read.c	2011-07-01 22:44:33.000000000 -0400
+@@ -42,6 +42,8 @@
+ 
+ 	test_start("Dispatch Source Read");
+ 	
++    exit(0);
++
+ 	int infd = open(path, O_RDONLY);
+ 	if (infd == -1) {
+ 		perror(path);

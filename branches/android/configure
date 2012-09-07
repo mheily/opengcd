@@ -52,6 +52,14 @@ project.add(
        :id => 'libpthread_workqueue',
        :uri => svn('libpthread_workqueue/trunk')
       ),
+
+  # Update all dependencies (TODO -- move into makeconf)
+  Target.new('update', [], [
+      'cd libBlocksRuntime && svn up',
+      'cd libkqueue && svn up',
+      'cd libpthread_workqueue && svn up',
+      ]),
+
   Target.new('libdispatch', [], [
       # Use the same steps as the Debian build process
       'tar zxf libdispatch_0\~svn197.orig.tar.gz',

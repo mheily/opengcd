@@ -1,0 +1,10 @@
+Known bugs for the Android port:
+
+ * The configure script will fail if clang is not installed, even though
+   it is not needed for the Android build. 
+   The workaround is to make sure clang is available in your $PATH.
+
+ * The configure script for libdispatch will call pkg-config to search 
+   for libkqueue. As a workaround, you can run 
+   'sudo aptitude install libkqueue-dev' to bring in the .pc file. 
+   This might also happen with libpthread_workqueue.

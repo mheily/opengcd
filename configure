@@ -87,9 +87,9 @@ project.add(
   Library.new(
       :id => 'libdispatch',
       :cflags => '-fblocks -D__BLOCKS__ -I./libdispatch -I./libdispatch/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
-      :ldadd => ['libBlocksRuntime/obj/local/armeabi/libBlocksRuntime_static.a',
-                 'libkqueue/obj/local/armeabi/libkqueue_static.a',
-                 'libpthread_workqueue/obj/local/armeabi/libpthread_workqueue_static.a'],
+      :ldadd => ['libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.a',
+                 'libkqueue/obj/local/armeabi/libkqueue.a',
+                 'libpthread_workqueue/obj/local/armeabi/libpthread_workqueue.a'],
       :sources => %w{ 
          apply.c
          benchmark.c
@@ -105,6 +105,15 @@ project.add(
          shims/time.c
          shims/tsd.c
       }.map { |p| 'libdispatch/src/' + p }
+  ),
+  Test.new(
+    :id => 'dispatch-api',
+    :cflags => '-Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime',
+    :sources => %w{ 
+            dispatch_api.c 
+            dispatch_test.c 
+        }.map { |p| 'libdispatch/testing/' + p },
+    :ldadd => [ 'libdispatch/obj/local/armeabi/libdispatch.a' ]
   )
 )
 

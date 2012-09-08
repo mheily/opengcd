@@ -3,7 +3,7 @@ Building OpenGCD for Android
 
 Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 
-  1. In your NDK toolchains directory, copy the arm-linux-androideabi-4.6 toolchain to arm-linux-androideabi-3.2. Replace gcc with clang.
+  1. In your NDK toolchains directory, copy the arm-linux-androideabi-4.6 toolchain to arm-linux-androideabi-3.2. Replace gcc with clang. Edit the setup.mk file and remove the --inline-limit flag, which is not supported by clang.
 
 
   2. Run the configure script and provide the paths to your NDK and SDK. Example:

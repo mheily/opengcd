@@ -29,6 +29,19 @@ def svn(path)
   end
 end
 
+# Return a libdispatch Test object
+def dispatch_test(id, src)
+  # Workaround for error compiling <TargetConditional.h>
+  force_arm = '-DTARGET_CPU_ARM=1'
+
+  Test.new(
+    :id => id,
+    :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime' + force_arm,
+    :sources => [ src, 'dispatch_test.c' ].map { |p| 'libdispatch/testing/' + p },
+    :ldadd => [ 'libdispatch/obj/local/armeabi/libdispatch.a' ]
+    )
+end
+
 cc = CCompiler.new(
   :search => %w{clang}
 )
@@ -106,15 +119,24 @@ project.add(
          shims/tsd.c
       }.map { |p| 'libdispatch/src/' + p }
   ),
-  Test.new(
-    :id => 'dispatch-api',
-    :cflags => '-Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime',
-    :sources => %w{ 
-            dispatch_api.c 
-            dispatch_test.c 
-        }.map { |p| 'libdispatch/testing/' + p },
-    :ldadd => [ 'libdispatch/obj/local/armeabi/libdispatch.a' ]
-  )
+  dispatch_test('dispatch-api', 'dispatch_api.c'),
+  dispatch_test('dispatch-c99', 'dispatch_c99.c'),
+  dispatch_test('dispatch-cascade', 'dispatch_cascade.c'),
+  dispatch_test('dispatch-debug', 'dispatch_debug.c'),
+  dispatch_test('dispatch-priority', 'dispatch_priority.c'),
+#FIXME:dispatch_test('dispatch-priority2', 'dispatch_priority.c'),
+  dispatch_test('dispatch-starfish', 'dispatch_starfish.c'),
+  dispatch_test('dispatch-after', 'dispatch_after.c'),
+  dispatch_test('dispatch-apply', 'dispatch_apply.c'),
+  dispatch_test('dispatch-drift', 'dispatch_drift.c'),
+  dispatch_test('dispatch-group', 'dispatch_group.c'),
+  dispatch_test('dispatch-pingpong', 'dispatch_pingpong.c'),
+#FIXME: broken on Linux w old libkqueue
+#  dispatch_test('dispatch-read', 'dispatch_read.c'),
+  dispatch_test('dispatch-readsync', 'dispatch_readsync.c'),
+  dispatch_test('dispatch-sema', 'dispatch_sema.c'),
+  dispatch_test('dispatch-timer_bit31', 'dispatch_timer_bit31.c'),
+  dispatch_test('dispatch-timer_bit63', 'dispatch_timer_bit63.c')
 )
 
 # Require the use of an unofficial Clang 3.2-based toolchain for Android.

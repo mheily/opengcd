@@ -68,6 +68,7 @@ project.add(
 
   # Update all dependencies (TODO -- move into makeconf)
   Target.new('update', [], [
+      'svn up',
       'cd libBlocksRuntime && svn up',
       'cd libkqueue && svn up',
       'cd libpthread_workqueue && svn up',

@@ -1,7 +1,7 @@
-Index: libdispatch-0~svn197/configure.ac
+Index: configure.ac
 ===================================================================
---- libdispatch-0~svn197.orig/configure.ac	2011-06-28 22:06:58.000000000 -0400
-+++ libdispatch-0~svn197/configure.ac	2011-06-28 22:07:19.000000000 -0400
+--- configure.ac	2011-06-28 22:06:58.000000000 -0400
++++ configure.ac	2011-06-28 22:07:19.000000000 -0400
 @@ -8,6 +8,7 @@
  AC_CONFIG_AUX_DIR(config)
  AC_CONFIG_HEADER([config/config.h])
@@ -18,10 +18,10 @@ Index: libdispatch-0~svn197/configure.ac
  AC_PROG_CXX
  AC_PROG_INSTALL
  AC_PROG_LIBTOOL
-Index: libdispatch-0~svn197/m4/private-extern.m4
+Index: m4/private-extern.m4
 ===================================================================
---- libdispatch-0~svn197.orig/m4/private-extern.m4	2011-06-28 22:06:52.000000000 -0400
-+++ libdispatch-0~svn197/m4/private-extern.m4	2011-06-28 22:07:19.000000000 -0400
+--- m4/private-extern.m4	2011-06-28 22:06:52.000000000 -0400
++++ m4/private-extern.m4	2011-06-28 22:07:19.000000000 -0400
 @@ -19,7 +19,15 @@
                      [dispatch_cv_private_extern=yes],
                      [dispatch_cv_private_extern=no])])
@@ -39,10 +39,10 @@ Index: libdispatch-0~svn197/m4/private-extern.m4
    AC_DEFINE(HAVE_PRIVATE_EXTERN, 1, Define if __private_extern__ present)
  elif test $dispatch_cv_hidden_visibility_attribute = yes; then
    AC_DEFINE(HAVE_PRIVATE_EXTERN, 1, Define if __private_extern__ present)
-Index: libdispatch-0~svn197/src/queue.c
+Index: src/queue.c
 ===================================================================
---- libdispatch-0~svn197.orig/src/queue.c	2011-06-28 22:07:04.000000000 -0400
-+++ libdispatch-0~svn197/src/queue.c	2011-06-28 22:07:19.000000000 -0400
+--- src/queue.c	2011-06-28 22:07:04.000000000 -0400
++++ src/queue.c	2011-06-28 22:07:19.000000000 -0400
 @@ -23,6 +23,8 @@
  #include "protocol.h"
  #endif

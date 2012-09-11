@@ -52,6 +52,12 @@ project = Project.new(
   :cc => cc
 )
 
+# Require the use of an unofficial Clang 3.2-based toolchain for Android.
+if SystemType.host =~ /-androideabi$/
+  project.ndk_toolchain_version = '3.2'
+end
+
+
 project.add(
   ExternalProject.new(
        :id => 'libBlocksRuntime',
@@ -65,6 +71,26 @@ project.add(
        :id => 'libpthread_workqueue',
        :uri => svn('libpthread_workqueue/trunk')
       ),
+  ExternalProject.new(
+       :id => 'libdispatch',
+       :uri => 'file://libdispatch.tgz',
+       :buildable => false,
+       :patch => %w{ 
+                      disable_dispatch_read.patch
+                      libdispatch-r197_v2.patch
+                      dispatch-workaround.diff
+                      dispatch-spawn.diff
+                      dispatch-atomic.diff
+                      dispatch-semaphore.diff
+                      dispatch-blocks.diff
+                      dispatch-internal.diff
+                    }.map { |path| 'patch/' + path },
+     :configure => 'CC=' + project.cc.path +
+       ' CFLAGS="--sysroot=' + project.cc.sysroot + ' -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
+       ' LIBS="-lBlocksRuntime"' +
+       ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi"' +
+       ' ./configure'
+      ),
 
   # Update all dependencies (TODO -- move into makeconf)
   Target.new('update', [], [
@@ -74,7 +100,8 @@ project.add(
       'cd libpthread_workqueue && svn up',
       ]),
 
-  Target.new('libdispatch', [], [
+#DEADWOOD---
+  Target.new('libdispatchOLD', [], [
       # Use the same steps as the Debian build process
       'tar zxf libdispatch_0\~svn197.orig.tar.gz',
       'patch -p0 < patch/disable_dispatch_read.patch',
@@ -139,10 +166,5 @@ project.add(
   dispatch_test('dispatch-timer_bit31', 'dispatch_timer_bit31.c'),
   dispatch_test('dispatch-timer_bit63', 'dispatch_timer_bit63.c')
 )
-
-# Require the use of an unofficial Clang 3.2-based toolchain for Android.
-if SystemType.host =~ /-androideabi$/
-  project.ndk_toolchain_version = '3.2'
-end
 
 Makeconf.configure(project)

@@ -11,10 +11,21 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
                --with-ndk=/home/mheily/src/android-ndk-r8b \
                --with-sdk=/home/mheily/android-sdks
 
-  3. Run the configure script again, with exactly the same arguments. This
-     is a temporary workaround for a problem with Makeconf.
+     NOTE: Libdispatch will fail to configure. This can be ignored.
 
-  4. Build everything
+  3. Build the libdispatch dependencies manually.
+
+        cd libBlocksRuntime && make && cd ..
+        cd libkqueue && make && cd ..
+        cd libpthread_workqueue && make && cd ..
+
+  3. Run the configure script again, with exactly the same arguments.
+
+     ./configure --host=arm-linux-androideabi \
+               --with-ndk=/home/mheily/src/android-ndk-r8b \
+               --with-sdk=/home/mheily/android-sdks
+
+  4. Build libdispatch
 
         make
 

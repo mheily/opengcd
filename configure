@@ -87,7 +87,7 @@ project.add(
                     }.map { |path| 'patch/' + path },
      :configure => 'CC=' + project.cc.path +
        ' CFLAGS="--sysroot=' + project.cc.sysroot + ' -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
-       ' LIBS="-lBlocksRuntime"' +
+       ' LIBS=""' +
        ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi"' +
        ' ./configure'
       ),

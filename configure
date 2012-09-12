@@ -54,7 +54,44 @@ project = Project.new(
 
 # Require the use of an unofficial Clang 3.2-based toolchain for Android.
 if SystemType.host =~ /-androideabi$/
+  begin
   project.ndk_toolchain_version = '3.2'
+  rescue
+    warn "*** A clang-based toolchain was not found. Please run 'make clang/build' and follow the directions to make a clang-based toolchain ***"
+
+    project.add(
+  # Build a clang compiler for Android
+  Target.new('clang', [], [
+	# Checkout LLVM
+	#
+	'mkdir clang',
+	'cd clang && svn co -q http://llvm.org/svn/llvm-project/llvm/trunk llvm',
+
+	#
+	# Checkout clang
+	#
+        'cd clang/llvm/tools && svn co -q http://llvm.org/svn/llvm-project/cfe/trunk@161462 clang',
+
+	#
+	# Checkout compiler-rt
+	#
+	'cd clang/llvm/projects && svn co -q http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt'
+      ]),
+
+	#
+	# Build everything 
+	#
+  Target.new('clang/build', ['clang'], [
+	'mkdir clang/build', 
+	'cd clang/build && \\',
+	'../llvm/configure --target=arm-linux-androideabi  && \\',
+	'make -j4'
+      ])
+    )
+
+    Makeconf.configure project
+    exit 0
+  end
 end
 
 

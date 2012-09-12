@@ -43,7 +43,7 @@ def dispatch_test(id, src)
 end
 
 cc = CCompiler.new(
-  :search => %w{clang}
+  :search => %w{clang gcc cc}
 )
 
 project = Project.new(

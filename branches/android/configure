@@ -162,6 +162,12 @@ project.add(
        'rm .gdb-commands',
        ]),
 
+  # Connect to the device and run a shell
+  # TODO: add to makeconf
+  Target.new('shell', [], [
+          '$(ADB) shell'
+          ]),
+
 #DEADWOOD---
   Target.new('libdispatchOLD', [], [
       # Use the same steps as the Debian build process

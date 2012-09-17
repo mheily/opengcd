@@ -129,13 +129,38 @@ project.add(
        ' ./configure'
       ),
 
-  # Update all dependencies (TODO -- move into makeconf)
+  # Update all dependencies and force everything to be rebuilt
+  #(TODO -- move into makeconf)
   Target.new('update', [], [
       'svn up',
-      'cd libBlocksRuntime && svn up',
-      'cd libkqueue && svn up',
-      'cd libpthread_workqueue && svn up',
+      'cd libBlocksRuntime && svn up && rm -rf obj',
+      'cd libkqueue && svn up && rm -rf obj',
+      'cd libpthread_workqueue && svn up && rm -rf obj',
+      'rm -rf obj',
+      'rm *-stamp'
       ]),
+
+  # Run a $(BINARY) under the Android debugger
+  # TODO: add to makeconf
+  # see: http://www.kandroid.org/online-pdk/guide/debugging_gdb.html
+  Target.new('debug', [], [
+       '$(ADB) forward tcp:5039 tcp:5039',
+       '$(ADB) push $(BINARY) /data/local/tmp',
+       '$(ADB) shell chmod 751 /data/local/tmp/`basename $(BINARY)`',
+       '$(ADB) shell gdbserver :5039 /data/local/tmp/`basename $(BINARY)` &',
+       'sleep 2', # give gdbserver time to start
+
+        # Pull things from the device that are needed for debugging
+        '$(ADB) pull /system/bin/linker obj/local/armeabi/linker',
+        '$(ADB) pull /system/lib/libc.so obj/local/armeabi/libc.so',
+        '$(ADB) pull /system/lib/libm.so obj/local/armeabi/libm.so',
+        '$(ADB) pull /system/lib/libstdc++.so obj/local/armeabi/libstdc++.so',
+
+       'echo "set solib-search-path obj/local/armeabi" > .gdb-commands',
+       'echo "target remote :5039" >> .gdb-commands',
+       '$(GDB) -x .gdb-commands $(BINARY)',
+       'rm .gdb-commands',
+       ]),
 
 #DEADWOOD---
   Target.new('libdispatchOLD', [], [

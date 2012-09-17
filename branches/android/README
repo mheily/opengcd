@@ -32,3 +32,14 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
   5. Run the unit tests
 
         make check
+
+Debugging
+---------
+
+To run one of the test programs under the debugger, follow these steps:
+
+   1. Run the "make debug" target and set the BINARY variable to the
+      path to the binary. Example:
+   
+        make debug BINARY=obj/local/armeabi/dispatch-api
+

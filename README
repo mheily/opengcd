@@ -1,0 +1,45 @@
+Building OpenGCD for Android
+----------------------------
+
+Make sure to read the BUGS file for any bugs pertaining to the Android platform.
+
+  1. In your NDK toolchains directory, copy the arm-linux-androideabi-4.6 toolchain to arm-linux-androideabi-3.2. Replace gcc with clang. Edit the setup.mk file and remove the --inline-limit flag, which is not supported by clang.
+
+  2. Run the configure script and provide the paths to your NDK and SDK. Example:
+
+     ./configure --host=arm-linux-androideabi \
+               --with-ndk=/home/mheily/src/android-ndk-r8b \
+               --with-sdk=/home/mheily/android-sdks
+
+     NOTE: Libdispatch will fail to configure. This can be ignored.
+
+  3. Build the libdispatch dependencies manually.
+
+        cd libBlocksRuntime && make && cd ..
+        cd libkqueue && make && cd ..
+        cd libpthread_workqueue && make && cd ..
+
+  3. Run the configure script again, with exactly the same arguments.
+
+     ./configure --host=arm-linux-androideabi \
+               --with-ndk=/home/mheily/src/android-ndk-r8b \
+               --with-sdk=/home/mheily/android-sdks
+
+  4. Build libdispatch
+
+        make
+
+  5. Run the unit tests
+
+        make check
+
+Debugging
+---------
+
+To run one of the test programs under the debugger, follow these steps:
+
+   1. Run the "make debug" target and set the BINARY variable to the
+      path to the binary. Example:
+   
+        make debug BINARY=obj/local/armeabi/dispatch-api
+

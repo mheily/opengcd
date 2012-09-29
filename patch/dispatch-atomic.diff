@@ -1,0 +1,25 @@
+--- configure.ac.OLD	2012-09-05 21:40:24.000000000 -0400
++++ configure.ac	2012-09-05 21:41:12.000000000 -0400
+@@ -125,14 +125,14 @@
+ 
+ AM_INIT_AUTOMAKE([foreign])
+ 
+-DISPATCH_C_ATOMIC_BUILTINS
+-
+-case $dispatch_cv_atomic in
+-  yes) ;;
+-  -march*) MARCH_FLAGS="$dispatch_cv_atomic"
+-         AC_SUBST([MARCH_FLAGS]) ;;
+-  *) AC_MSG_ERROR([No gcc builtin atomic operations available]) ;;
+-esac
++#DISPATCH_C_ATOMIC_BUILTINS
++#
++#case $dispatch_cv_atomic in
++#  yes) ;;
++#  -march*) MARCH_FLAGS="$dispatch_cv_atomic"
++#         AC_SUBST([MARCH_FLAGS]) ;;
++#  *) AC_MSG_ERROR([No gcc builtin atomic operations available]) ;;
++#esac
+ 
+ #
+ # Find libraries we will need

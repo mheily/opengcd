@@ -31,20 +31,23 @@ end
 
 # Return a libdispatch Test object
 def dispatch_test(id, src)
-  # Workaround for error compiling <TargetConditional.h>
-  force_arm = '-DTARGET_CPU_ARM=1'
 
   # Workaround for different build path on Android
   if SystemType.host =~ /-androideabi$/
     # FIXME: should include libkqueue & libpwq
     ldadd = 'libdispatch/obj/local/armeabi/libdispatch.a'
+
+    # Workaround for error compiling <TargetConditional.h>
+    force_arm = '-DTARGET_CPU_ARM=1'
   else
+    force_arm = ''
     ldadd = ['libdispatch.a',
              'libBlocksRuntime/libBlocksRuntime.a',
              'libkqueue/libkqueue.a',
              'libpthread_workqueue/libpthread_workqueue.a',
              '-lpthread', 
              '-lrt']
+             ldadd = ['-ldispatch', '-lpthread', '-lrt' ]
   end
 
   Test.new(

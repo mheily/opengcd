@@ -108,26 +108,6 @@ project.add(
        :id => 'libpthread_workqueue',
        :uri => svn('libpthread_workqueue/trunk')
       ),
-  ExternalProject.new(
-       :id => 'libdispatch',
-       :uri => 'file://libdispatch.tgz',
-       :buildable => false,
-       :patch => %w{ 
-                      disable_dispatch_read.patch
-                      libdispatch-r197_v2.patch
-                      dispatch-workaround.diff
-                      dispatch-spawn.diff
-                      dispatch-atomic.diff
-                      dispatch-semaphore.diff
-                      dispatch-blocks.diff
-                      dispatch-internal.diff
-                    }.map { |path| 'patch/' + path },
-     :configure => 'CC=' + project.cc.path +
-       ' CFLAGS="--sysroot=' + project.cc.sysroot + ' -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
-       ' LIBS=""' +
-       ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi"' +
-       ' ./configure'
-      ),
 
   # Update all dependencies and force everything to be rebuilt
   #(TODO -- move into makeconf)
@@ -206,5 +186,36 @@ project.add(
   dispatch_test('dispatch-timer_bit31', 'dispatch_timer_bit31.c'),
   dispatch_test('dispatch-timer_bit63', 'dispatch_timer_bit63.c')
 )
+
+if SystemType.host =~ /-androideabi$/
+  project.add ExternalProject.new(
+       :id => 'libdispatch',
+       :uri => 'file://libdispatch.tgz',
+       :buildable => false,
+       :patch => %w{ 
+                      disable_dispatch_read.patch
+                      libdispatch-r197_v2.patch
+                      dispatch-workaround.diff
+                      dispatch-spawn.diff
+                      dispatch-atomic.diff
+                      dispatch-semaphore.diff
+                      dispatch-blocks.diff
+                      dispatch-internal.diff
+                    }.map { |path| 'patch/' + path },
+     :configure => 'CC=' + project.cc.path +
+       ' CFLAGS="--sysroot=' + project.cc.sysroot + ' -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
+       ' LIBS=""' +
+       ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi"' +
+       ' ./configure'
+      )
+
+else
+  # Assume it is Linux for now..
+  project.add ExternalProject.new(
+       :id => 'libdispatch',
+       :uri => 'file://libdispatch.tgz',
+       :buildable => false,
+      )
+end
 
 Makeconf.configure(project)

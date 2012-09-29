@@ -232,7 +232,7 @@ else
   project.add ExternalProject.new(
        :id => 'libdispatch',
        :uri => 'file://libdispatch.tgz',
-       :buildable => false,
+       :buildable => false
       )
 end
 

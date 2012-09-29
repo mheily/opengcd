@@ -34,11 +34,24 @@ def dispatch_test(id, src)
   # Workaround for error compiling <TargetConditional.h>
   force_arm = '-DTARGET_CPU_ARM=1'
 
+  # Workaround for different build path on Android
+  if SystemType.host =~ /-androideabi$/
+    # FIXME: should include libkqueue & libpwq
+    ldadd = 'libdispatch/obj/local/armeabi/libdispatch.a'
+  else
+    ldadd = ['libdispatch.a',
+             'libBlocksRuntime/libBlocksRuntime.a',
+             'libkqueue/libkqueue.a',
+             'libpthread_workqueue/libpthread_workqueue.a',
+             '-lpthread', 
+             '-lrt']
+  end
+
   Test.new(
     :id => id,
     :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime' + force_arm,
     :sources => [ src, 'dispatch_test.c' ].map { |p| 'libdispatch/testing/' + p },
-    :ldadd => [ 'libdispatch/obj/local/armeabi/libdispatch.a' ]
+    :ldadd => ldadd
     )
 end
 
@@ -145,12 +158,14 @@ project.add(
        ' LDFLAGS="-Wl,-rpath-link=$(NDK_LIBDIR) -L$(NDK_LIBDIR) -L../libBlocksRuntime/obj/local/armeabi"' +
        ' ./configure --host=arm-linux-androideabi'
       ]),
+
+
   Library.new(
       :id => 'libdispatch',
       :cflags => '-fblocks -D__BLOCKS__ -I./libdispatch -I./libdispatch/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
-      :ldadd => ['libBlocksRuntime/obj/local/armeabi/libBlocksRuntime.a',
-                 'libkqueue/obj/local/armeabi/libkqueue.a',
-                 'libpthread_workqueue/obj/local/armeabi/libpthread_workqueue.a'],
+      :ldadd => ['libBlocksRuntime/libBlocksRuntime.a',
+                 'libkqueue/libkqueue.a',
+                 'libpthread_workqueue/libpthread_workqueue.a'],
       :sources => %w{ 
          apply.c
          benchmark.c

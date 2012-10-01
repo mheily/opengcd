@@ -156,12 +156,24 @@ project.add(
       'cd libdispatch && autoreconf -fvi',
 
      'cd libdispatch && CC=$(CC)' +
+       ' PKG_CONFIG_PATH=../libkqueue' +
        ' CFLAGS="-nostdlib -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
        ' LIBS="-lBlocksRuntime"' +
        ' LDFLAGS="-Wl,-rpath-link=$(NDK_LIBDIR) -L$(NDK_LIBDIR) -L../libBlocksRuntime/obj/local/armeabi"' +
        ' ./configure --host=arm-linux-androideabi'
       ]),
 
+
+  Header.new(
+      :id => 'libdispatch',
+      :namespace => 'dispatch',
+      :sources => 'libdispatch/dispatch/*.h'
+  ),
+
+  Header.new(
+      :id => 'libBlocksRuntime',
+      :sources => 'libBlocksRuntime/Block.h'
+  ),
 
   Library.new(
       :id => 'libdispatch',
@@ -232,7 +244,15 @@ else
   project.add ExternalProject.new(
        :id => 'libdispatch',
        :uri => 'file://libdispatch.tgz',
-       :buildable => false
+       :patch => %w{ 
+                      dispatch-private_extern.diff
+                   }.map { |path| 'patch/' + path },
+       :buildable => false,
+       :configure => 'CC=' + project.cc.path +
+       ' CFLAGS="-I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
+       ' LIBS=""' +
+       ' LDFLAGS="-L../libBlocksRuntime"' +
+       ' ./configure'
       )
 end
 

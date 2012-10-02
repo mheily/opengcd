@@ -248,7 +248,12 @@ else
                       dispatch-private_extern.diff
                    }.map { |path| 'patch/' + path },
        :buildable => false,
-       :configure => 'CC=' + project.cc.path +
+       :configure => 
+       
+       # FIXME: this needs to be expressed as a formal build dependency
+       'cd ../libBlocksRuntime && make && cd ../libdispatch && ' +
+
+       'CC=' + project.cc.path +
        ' CFLAGS="-I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
        ' LIBS=""' +
        ' LDFLAGS="-L../libBlocksRuntime"' +

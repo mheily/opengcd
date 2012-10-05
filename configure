@@ -52,7 +52,7 @@ def dispatch_test(id, src)
 
   Test.new(
     :id => id,
-    :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime -Ilibpthread_workqueue/include' + force_arm,
+    :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime -Ilibpthread_workqueue/include ' + force_arm,
     :sources => [ src, 'dispatch_test.c' ].map { |p| 'libdispatch/testing/' + p },
     :ldadd => ldadd
     )

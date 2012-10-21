@@ -31,6 +31,7 @@ end
 
 # Return a libdispatch Test object
 def dispatch_test(id, src)
+    extra_cflags = ''
 
   # Workaround for different build path on Android
   if SystemType.host =~ /-androideabi$/
@@ -38,9 +39,8 @@ def dispatch_test(id, src)
     ldadd = 'libdispatch/obj/local/armeabi/libdispatch.a'
 
     # Workaround for error compiling <TargetConditional.h>
-    force_arm = '-DTARGET_CPU_ARM=1'
+    extra_cflags += '-DTARGET_CPU_ARM=1 -DTARGET_OS_EMBEDDED'
   else
-    force_arm = ''
     ldadd = ['libdispatch.a',
              'libBlocksRuntime/libBlocksRuntime.a',
              'libkqueue/libkqueue.a',
@@ -52,7 +52,7 @@ def dispatch_test(id, src)
 
   Test.new(
     :id => id,
-    :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime -Ilibpthread_workqueue/include ' + force_arm,
+    :cflags => '-fblocks -Ilibdispatch -Ilibdispatch/include -IlibBlocksRuntime -Ilibpthread_workqueue/include ' + extra_cflags,
     :sources => [ src, 'dispatch_test.c' ].map { |p| 'libdispatch/testing/' + p },
     :ldadd => ldadd
     )

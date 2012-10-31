@@ -146,14 +146,12 @@ project.add(
 
 
       # Extra stuff for Android
-      # Hopefully you have a recent copy of Autoconf that supports Android
       'cd libdispatch && patch -p0 < ../patch/dispatch-workaround.diff',
       'cd libdispatch && patch -p0 < ../patch/dispatch-spawn.diff',
       'cd libdispatch && patch -p0 < ../patch/dispatch-atomic.diff',
       'cd libdispatch && patch -p0 < ../patch/dispatch-semaphore.diff',
       'cd libdispatch && patch -p0 < ../patch/dispatch-blocks.diff',
       'cd libdispatch && patch -p0 < ../patch/dispatch-internal.diff',
-      'cd libdispatch && autoreconf -fvi',
 
      'cd libdispatch && CC=$(CC)' +
        ' PKG_CONFIG_PATH=../libkqueue' +

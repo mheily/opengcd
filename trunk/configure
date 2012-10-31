@@ -36,7 +36,7 @@ def dispatch_test(id, src)
   # Workaround for different build path on Android
   if SystemType.host =~ /-androideabi$/
     # FIXME: should include libkqueue & libpwq
-    ldadd = 'libdispatch/obj/local/armeabi/libdispatch.a'
+    ldadd = 'libdispatch/obj/local/armeabi-v7a/libdispatch.a'
 
     # Workaround for error compiling <TargetConditional.h>
     extra_cflags += '-DTARGET_CPU_ARM=1 -DTARGET_OS_EMBEDDED'
@@ -157,7 +157,7 @@ project.add(
        ' PKG_CONFIG_PATH=../libkqueue' +
        ' CFLAGS="-nostdlib -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
        ' LIBS="-lBlocksRuntime"' +
-       ' LDFLAGS="-Wl,-rpath-link=$(NDK_LIBDIR) -L$(NDK_LIBDIR) -L../libBlocksRuntime/obj/local/armeabi"' +
+       ' LDFLAGS="-Wl,-rpath-link=$(NDK_LIBDIR) -L$(NDK_LIBDIR) -L../libBlocksRuntime/obj/local/armeabi-v7a"' +
        ' ./configure --host=arm-linux-androideabi'
       ]),
 
@@ -233,7 +233,7 @@ if SystemType.host =~ /-androideabi$/
      :configure => 'CC=' + project.cc.path +
        ' CFLAGS="--sysroot=' + project.cc.sysroot + ' -I../libkqueue/include -I../libpthread_workqueue/include -I../libBlocksRuntime"' +
        ' LIBS=""' +
-       ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi"' +
+       ' LDFLAGS="-Wl,-rpath-link=' + project.ndk_libdir + ' -L' + project.ndk_libdir + ' -L../libBlocksRuntime/obj/local/armeabi-v7a"' +
        ' ./configure'
       )
 

@@ -216,6 +216,11 @@ project.add(
 )
 
 if SystemType.host =~ /-androideabi$/
+
+  project.add Target.new('binary-release', [], [
+     "tar --transform 's/^/libdispatch-0.1-arm-linux-androideabi/' --exclude='Makefile' --exclude 'Makefile.am' -zcvf libdispatch-0.1-arm-linux-androideabi.tgz libdispatch.a libdispatch.so libdispatch/dispatch libBlocksRuntime/Block.h"
+  ])
+
   project.add ExternalProject.new(
        :id => 'libdispatch',
        :uri => 'file://libdispatch.tgz',

@@ -1,0 +1,22 @@
+--- m4/blocks.m4.OLD	2012-09-05 22:10:01.000000000 -0400
++++ m4/blocks.m4	2012-09-05 22:10:46.000000000 -0400
+@@ -50,7 +50,8 @@
+       ], [
+ 	AC_MSG_RESULT([-lBlocksRuntime])
+       ], [
+-	AC_MSG_ERROR([can't find Blocks runtime])
++	AC_MSG_RESULT([-lBlocksRuntime])
++#AC_MSG_ERROR([can't find Blocks runtime])
+       ])
+     ])
+     CFLAGS="$saveCFLAGS"
+@@ -97,7 +98,8 @@
+       ], [
+ 	AC_MSG_RESULT([-lBlocksRuntime])
+       ], [
+-	AC_MSG_ERROR([can't find Blocks runtime])
++	AC_MSG_RESULT([-lBlocksRuntime])
++#	AC_MSG_ERROR([can't find Blocks runtime])
+       ])
+     ])
+     CXXFLAGS="$saveCXXFLAGS"

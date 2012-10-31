@@ -1,0 +1,13 @@
+Index: testing/dispatch_test.c
+===================================================================
+--- testing/dispatch_test.c	(revision 22)
++++ testing/dispatch_test.c	(working copy)
+@@ -114,7 +114,7 @@
+ 	free(expected_str);
+ }
+ 
+-#include <spawn.h>
++//#include <spawn.h>
+ 
+ extern char **environ;
+ 

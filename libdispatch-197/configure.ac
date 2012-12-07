@@ -8,6 +8,7 @@ AC_REVISION([$$])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([config/config.h])
 AC_CONFIG_MACRO_DIR([m4])
+AC_PROG_CC([clang gcc cc])
 AC_USE_SYSTEM_EXTENSIONS
 AM_MAINTAINER_MODE
 
@@ -112,7 +113,6 @@ AS_IF([test "x$enable_apple_semaphore_optimizations" = "xyes"],
 )
 
 AC_USE_SYSTEM_EXTENSIONS
-AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -125,14 +125,14 @@ AS_IF([test "x$LEAKS" != "x"],
 
 AM_INIT_AUTOMAKE([foreign])
 
-DISPATCH_C_ATOMIC_BUILTINS
-
-case $dispatch_cv_atomic in
-  yes) ;;
-  -march*) MARCH_FLAGS="$dispatch_cv_atomic"
-         AC_SUBST([MARCH_FLAGS]) ;;
-  *) AC_MSG_ERROR([No gcc builtin atomic operations available]) ;;
-esac
+#DISPATCH_C_ATOMIC_BUILTINS
+#
+#case $dispatch_cv_atomic in
+#  yes) ;;
+#  -march*) MARCH_FLAGS="$dispatch_cv_atomic"
+#         AC_SUBST([MARCH_FLAGS]) ;;
+#  *) AC_MSG_ERROR([No gcc builtin atomic operations available]) ;;
+#esac
 
 #
 # Find libraries we will need
@@ -219,6 +219,7 @@ AC_CHECK_FUNC([sem_init],
 # We support both Mach semaphores and POSIX semaphores; if the former are
 # available, prefer them.
 #
+have_sem_init="true"    # Android has these but does not expose them publicly
 AC_MSG_CHECKING([what semaphore type to use]);
 AS_IF([test "x$have_mach" = "xtrue"],
   [AC_DEFINE(USE_MACH_SEM, 1,[Define to use Mach semaphores])

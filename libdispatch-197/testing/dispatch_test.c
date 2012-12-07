@@ -114,7 +114,7 @@ _test_errno(const char* file, long line, const char* desc, long actual, long exp
 	free(expected_str);
 }
 
-#include <spawn.h>
+//#include <spawn.h>
 
 extern char **environ;
 

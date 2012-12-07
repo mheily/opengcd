@@ -23,6 +23,8 @@
 #include "protocol.h"
 #endif
 
+static void _dispatch_queue_cleanup(void *ctxt);
+
 void
 dummy_function(void)
 {
@@ -377,7 +379,7 @@ _dispatch_queue_concurrent_drain_one(dispatch_queue_t dq)
 		// The first xchg on the tail will tell the enqueueing thread that it
 		// is safe to blindly write out to the head pointer. A cmpxchg honors
 		// the algorithm.
-		dispatch_atomic_cmpxchg(&dq->dq_items_head, mediator, NULL);
+		(void) dispatch_atomic_cmpxchg(&dq->dq_items_head, mediator, NULL);
 		_dispatch_debug("no work on global work queue");
 		return NULL;
 	}
@@ -474,12 +476,13 @@ _dispatch_queue_set_width_init(void)
 	    _dispatch_hw_config.cc_max_physical =
 	    _dispatch_hw_config.cc_max_active;
 #elif HAVE_SYSCONF && defined(_SC_NPROCESSORS_ONLN)
-	_dispatch_hw_config.cc_max_active = (int)sysconf(_SC_NPROCESSORS_ONLN);
-	if (_dispatch_hw_config.cc_max_active < 0)
-		_dispatch_hw_config.cc_max_active = 1;
+    int ret;
+    
+	ret = (int)sysconf(_SC_NPROCESSORS_ONLN);
+
 	_dispatch_hw_config.cc_max_logical =
 	    _dispatch_hw_config.cc_max_physical =
-	    _dispatch_hw_config.cc_max_active;
+	    _dispatch_hw_config.cc_max_active = (ret < 0) ? 1 : ret;
 #else
 #warning "_dispatch_queue_set_width_init: no supported way to query CPU count"
 	_dispatch_hw_config.cc_max_logical =
@@ -941,8 +944,33 @@ dispatch_main(void)
 	if (pthread_main_np()) {
 #endif
 		_dispatch_program_is_probably_callback_driven = true;
-		pthread_exit(NULL);
-		DISPATCH_CRASH("pthread_exit() returned");
+#if defined(__linux__)
+        /*
+         * Workaround for a GNU/Linux bug that causes the process to
+         * become a zombie when the main thread calls pthread_exit().
+         */
+        sigset_t mask;
+        void *p;
+
+        p = pthread_getspecific(dispatch_queue_key);
+        if (p != NULL)
+            _dispatch_queue_cleanup(p);
+        p = pthread_getspecific(dispatch_sema4_key);
+        if (p != NULL)
+            _dispatch_release(p);
+        p = pthread_getspecific(dispatch_cache_key);
+        if (p != NULL)
+            _dispatch_cache_cleanup2(p);
+
+        sigfillset(&mask);
+        pthread_sigmask(SIG_SETMASK, &mask, NULL);
+        for (;;) {
+            pause();
+        }
+#else /* !defined(__linux__) */
+        pthread_exit(NULL);
+        DISPATCH_CRASH("pthread_exit() returned");
+#endif
 #if HAVE_PTHREAD_MAIN_NP
 	}
 	DISPATCH_CLIENT_CRASH("dispatch_main() must be called on the main thread");

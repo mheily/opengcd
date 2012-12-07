@@ -30,7 +30,7 @@
 #include <mach/port.h>
 #include <mach/message.h>
 #endif
-#include <sys/signal.h>
+#include <signal.h>
 
 /*!
  * @header

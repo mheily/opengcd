@@ -50,7 +50,8 @@ AS_IF([test "x$dispatch_cv_cblocks" != "xno"], [
       ], [
 	AC_MSG_RESULT([-lBlocksRuntime])
       ], [
-	AC_MSG_ERROR([can't find Blocks runtime])
+	AC_MSG_RESULT([-lBlocksRuntime])
+#AC_MSG_ERROR([can't find Blocks runtime])
       ])
     ])
     CFLAGS="$saveCFLAGS"
@@ -97,7 +98,8 @@ AS_IF([test "x$dispatch_cv_cxxblocks" != "xno"], [
       ], [
 	AC_MSG_RESULT([-lBlocksRuntime])
       ], [
-	AC_MSG_ERROR([can't find Blocks runtime])
+	AC_MSG_RESULT([-lBlocksRuntime])
+#	AC_MSG_ERROR([can't find Blocks runtime])
       ])
     ])
     CXXFLAGS="$saveCXXFLAGS"

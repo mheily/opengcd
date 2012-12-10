@@ -91,7 +91,7 @@ project.add(
       ),
   ExternalProject.new(
        :id => 'libkqueue',
-       :uri => svn('libkqueue/branches/stable')
+       :uri => svn('libkqueue/trunk')
       ),
   ExternalProject.new(
        :id => 'libpthread_workqueue',

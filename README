@@ -3,13 +3,20 @@ Building OpenGCD for Android
 
 Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 
-  1. In your NDK toolchains directory, copy the arm-linux-androideabi-4.6 toolchain to arm-linux-androideabi-3.2. Replace gcc with clang. Edit the setup.mk file and remove the --inline-limit flag, which is not supported by clang.
+  1. Download the Android NDK revision 8c or higher from here:
+     http://developer.android.com/tools/sdk/ndk/index.html
 
-  2. Run the configure script and provide the paths to your NDK and SDK. Example:
+  2. Download the Android SDK from here:
+     http://developer.android.com/sdk/index.html
+
+  3. Install the Android SDK and the NDK under /opt. 
+
+  4. Run the OpenGCD configure script and provide the paths to your NDK and SDK.
+     Example:
 
      ./configure --host=arm-linux-androideabi \
-               --with-ndk=/home/mheily/src/android-ndk-r8b \
-               --with-sdk=/home/mheily/android-sdks
+               --with-ndk=/opt/android-ndk-r8c \
+               --with-sdk=/opt/android-sdks
 
      NOTE: Libdispatch will fail to configure. This can be ignored.
 
@@ -22,8 +29,8 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
   3. Run the configure script again, with exactly the same arguments.
 
      ./configure --host=arm-linux-androideabi \
-               --with-ndk=/home/mheily/src/android-ndk-r8b \
-               --with-sdk=/home/mheily/android-sdks
+               --with-ndk=/opt/android-ndk-r8c \
+               --with-sdk=/opt/android-sdks
 
   4. Build libdispatch
 

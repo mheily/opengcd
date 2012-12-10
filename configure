@@ -148,7 +148,7 @@ project.add(
 
   Library.new(
       :id => 'libdispatch',
-      :cflags => '-fblocks -D_GNU_SOURCE -D__BLOCKS__ -I./libdispatch -I./libdispatch/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
+      :cflags => '-fblocks -D_GNU_SOURCE -D__BLOCKS__ -I./libdispatch-197 -I./libdispatch-197/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
       :ldadd => ['libBlocksRuntime/libBlocksRuntime.a',
                  'libkqueue/libkqueue.a',
                  'libpthread_workqueue/libpthread_workqueue.a'],

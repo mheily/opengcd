@@ -49,7 +49,7 @@ def dispatch_test(id, src)
     ldadd = 'libdispatch-197/obj/local/armeabi-v7a/libdispatch.a'
 
     # Workaround for error compiling <TargetConditional.h>
-    extra_cflags += '-DTARGET_CPU_ARM=1 -DTARGET_OS_EMBEDDED'
+    extra_cflags += ' -DTARGET_CPU_ARM=1 -DTARGET_OS_EMBEDDED'
   else
     ldadd = ['libdispatch.a',
              'libBlocksRuntime/libBlocksRuntime.a',
@@ -238,7 +238,7 @@ else
 end
 
 project.check_function 'clock_gettime', :ldadd => '-lrt'
-project.check_function 'pthread_create', :ldadd => '-lpthread' 
+project.check_function 'pthread_create', :include => '<pthread.h>', :ldadd => '-lpthread' 
 project.check_header %w{ TargetConditionals.h pthread_machdep.h pthread_np.h malloc/malloc.h libkern/OSCrossEndian.h libkern/OSAtomic.h sys/sysctl.h }
 project.check_header %w{ CoreServices/CoreServices.h }
 project.check_header %w{ mach/mach.h }
@@ -260,6 +260,7 @@ if project.check_function 'sem_init', :include => '<semaphore.h>', :ldadd => '-l
 end
 project.check_header 'sys/cdefs.h'
 #TODO: the rest
+project.define 'DISPATCH_NO_LEGACY'
 
 
 ##### libdispatch-197 stuff

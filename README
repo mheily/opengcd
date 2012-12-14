@@ -20,23 +20,11 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 
      NOTE: Libdispatch will fail to configure. This can be ignored.
 
-  3. Build the libdispatch dependencies manually.
-
-        cd libBlocksRuntime && make && cd ..
-        cd libkqueue && make && cd ..
-        cd libpthread_workqueue && make && cd ..
-
-  3. Run the configure script again, with exactly the same arguments.
-
-     ./configure --host=arm-linux-androideabi \
-               --with-ndk=/opt/android-ndk-r8c \
-               --with-sdk=/opt/android-sdks
-
-  4. Build libdispatch
+  5. Build libdispatch
 
         make
 
-  5. Run the unit tests
+  6. Run the unit tests
 
         make check
 

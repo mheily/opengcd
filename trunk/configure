@@ -259,8 +259,8 @@ if project.check_function 'sem_init', :include => '<semaphore.h>', :ldadd => '-l
   project.define 'USE_POSIX_SEM'
 end
 project.check_header 'sys/cdefs.h'
-#TODO: the rest
 project.define 'DISPATCH_NO_LEGACY'
+project.define 'USE_LIBDISPATCH_INIT_CONSTRUCTOR'
 
 
 ##### libdispatch-197 stuff

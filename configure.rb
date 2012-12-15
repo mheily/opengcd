@@ -74,7 +74,7 @@ cc = CCompiler.new(
 
 project = Project.new(
   :id => 'opengcd',
-  :version => '0.1',
+  :version => '0.2',
   :config_h => 'libdispatch-197/config/config.h',
   :cc => cc
 )

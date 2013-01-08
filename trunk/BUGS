@@ -8,3 +8,6 @@ Known bugs for the Android port:
    for libkqueue. As a workaround, you can run 
    'sudo aptitude install libkqueue-dev' to bring in the .pc file. 
    This might also happen with libpthread_workqueue.
+
+Known bugs for the Solaris port:
+

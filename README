@@ -18,11 +18,17 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
                --with-ndk=/opt/android-ndk-r8c \
                --with-sdk=/opt/android-sdks
 
-     NOTE: Libdispatch will fail to configure. This can be ignored.
-
   5. Build libdispatch
 
         make
+
+     **** NOTE: this currently fails due to problems with the
+        generated libdispatch-197/config/config.h. You need to edit this file
+        and append the following lines:
+
+#define  HAVE_CLOCK_GETTIME 1
+#define  HAVE_DECL_CLOCK_MONOTONIC 1
+#define  HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME 1
 
   6. Run the unit tests
 

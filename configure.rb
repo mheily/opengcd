@@ -78,6 +78,7 @@ project = Project.new(
   :config_h => 'libdispatch-197/config/config.h',
   :cc => cc
 )
+project.custom_configure_script = true
 
 # Require the use of the Clang toolchain for Android.
 if SystemType.host =~ /-androideabi$/
@@ -87,15 +88,18 @@ end
 project.add(
   ExternalProject.new(
        :id => 'libBlocksRuntime',
-       :uri => sf_svn('blocksruntime', 'trunk')
+       :uri => sf_svn('blocksruntime', 'trunk'),
+       :configure => './configure.rb'
       ),
   ExternalProject.new(
        :id => 'libkqueue',
-       :uri => sf_svn('libkqueue', 'trunk')
+       :uri => sf_svn('libkqueue', 'trunk'),
+       :configure => './configure.rb'
       ),
   ExternalProject.new(
        :id => 'libpthread_workqueue',
-       :uri => sf_svn('libpwq', 'trunk')
+       :uri => sf_svn('libpwq', 'trunk'),
+       :configure => './configure.rb'
       ),
 
   # Update all dependencies and force everything to be rebuilt

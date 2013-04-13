@@ -82,7 +82,7 @@ project.custom_configure_script = true
 
 # Require the use of the Clang toolchain for Android.
 if SystemType.host =~ /-androideabi$/
-  project.ndk_toolchain_version = 'clang3.1'
+  project.ndk_toolchain_version = 'clang3.2'
 end
 
 project.add(

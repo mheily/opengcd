@@ -3,22 +3,27 @@ Building OpenGCD for Android
 
 Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 
-  1. Download the Android NDK revision 8c or higher from here:
+  1. Download the Android NDK revision 8e from here:
      http://developer.android.com/tools/sdk/ndk/index.html
 
-  2. Download the Android SDK from here:
+  2. Install the Android NDK under /opt.
+
+  3. Download the Android Developer Tools (ADT) bundle version 20130219:
      http://developer.android.com/sdk/index.html
 
-  3. Install the Android SDK and the NDK under /opt. 
+  4. Install the ADT bundle under /opt. 
 
-  4. Run the OpenGCD configure script and provide the paths to your NDK and SDK.
+  5. Run the OpenGCD configure script and provide the paths to your NDK and SDK.
      Example:
 
      ./configure --host=arm-linux-androideabi \
-               --with-ndk=/opt/android-ndk-r8c \
-               --with-sdk=/opt/android-sdks
+               --with-ndk=/opt/android-ndk-r8e \
+               --with-sdk=/opt/adt-bundle-linux-x86_64-20130219/sdk
 
-  5. Build libdispatch
+       **NOTE** The path to the SDK depends on what OS you are using,
+                the above example is for a 64-bit Linux host.
+
+  6. Build libdispatch
 
         make
 
@@ -30,7 +35,7 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 #define  HAVE_DECL_CLOCK_MONOTONIC 1
 #define  HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME 1
 
-  6. Run the unit tests
+  7. Run the unit tests
 
         make check
 

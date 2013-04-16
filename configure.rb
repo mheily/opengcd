@@ -242,7 +242,7 @@ else
 end
 
 project.check_function 'clock_gettime', :ldadd => '-lrt'
-project.check_function 'pthread_create', :include => '<pthread.h>', :ldadd => '-lpthread' 
+project.check_function 'pthread_create', :include => 'pthread.h', :ldadd => '-lpthread' 
 project.check_header %w{ TargetConditionals.h pthread_machdep.h pthread_np.h malloc/malloc.h libkern/OSCrossEndian.h libkern/OSAtomic.h sys/sysctl.h }
 project.check_header %w{ CoreServices/CoreServices.h }
 project.check_header %w{ mach/mach.h }
@@ -250,16 +250,16 @@ project.check_header %w{ mach/mach.h }
   project.define 'HAVE_PTHREAD_WORKQUEUES'
 #end
 project.check_decl %w{ CLOCK_UPTIME CLOCK_MONOTONIC CLOCK_REALTIME}, 
-    :include => '<time.h>'
+    :include => 'time.h'
 project.check_decl %w{ EVFILT_LIO EVFILT_SESSION NOTE_NONE NOTE_REAP NOTE_REVOKE NOTE_SIGNAL },
-    :include => ['<sys/types.h>', '<sys/event.h>' ]
-project.check_decl 'FD_COPY', :include => '<sys/select.h>'
-project.check_decl 'SIGEMT', :include => '<signal.h>'
-project.check_decl %w{VQ_UPDATE VQ_VERYLOWDISK}, :include => '<sys/mount.h>'
-project.check_decl 'program_invocation_short_name', :include => '<errno.h>', :cflags => '-D_GNU_SOURCE'
-project.check_function %w{ pthread_key_init_np pthread_main_np mach_absolute_time malloc_create_zone sysconf getprogname getexecname vasprintf asprintf arc4random fgetln }, :include => '<unistd.h>'
-project.check_decl 'POSIX_SPAWN_START_SUSPENDED', :include => '<sys/spawn.h>'
-if project.check_function 'sem_init', :include => '<semaphore.h>', :ldadd => '-lpthread'
+    :include => ['sys/types.h', 'sys/event.h' ]
+project.check_decl 'FD_COPY', :include => 'sys/select.h'
+project.check_decl 'SIGEMT', :include => 'signal.h'
+project.check_decl %w{VQ_UPDATE VQ_VERYLOWDISK}, :include => 'sys/mount.h'
+project.check_decl 'program_invocation_short_name', :include => 'errno.h', :cflags => '-D_GNU_SOURCE'
+project.check_function %w{ pthread_key_init_np pthread_main_np mach_absolute_time malloc_create_zone sysconf getprogname getexecname vasprintf asprintf arc4random fgetln }, :include => 'unistd.h'
+project.check_decl 'POSIX_SPAWN_START_SUSPENDED', :include => 'sys/spawn.h'
+if project.check_function 'sem_init', :include => 'semaphore.h', :ldadd => '-lpthread'
   project.define 'USE_POSIX_SEM'
 end
 project.check_header 'sys/cdefs.h'

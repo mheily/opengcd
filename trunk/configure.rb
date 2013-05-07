@@ -154,11 +154,11 @@ project.add(
       :id => 'libdispatch',
       :cflags => '-fblocks -D_GNU_SOURCE -D__BLOCKS__ -I./libdispatch-197 -I./libdispatch-197/src -I./libkqueue/include -I./libpthread_workqueue/include -I./libBlocksRuntime',
       :ldadd => [
-      ( SystemType.host =~ /-androideabi$/ ?
-          'libBlocksRuntime/obj/local/*/objs-debug/BlocksRuntime-static/*.o' : 'libBlocksRuntime/*.o'),
+                 'libBlocksRuntime/libBlocksRuntime.a',
                  'libkqueue/libkqueue.a',
                  'libpthread_workqueue/libpthread_workqueue.a'],
       :sources => %w{ 
+         ../../libBlocksRuntime/data.c
          apply.c
          benchmark.c
          object.c

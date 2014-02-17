@@ -1,3 +1,20 @@
+Building OpenGCD for Linux
+--------------------------
+
+Run the following commands to build OpenGCD for Linux.
+
+  autogen.sh
+  ./configure --prefix=/usr
+  make
+  sudo make install
+  cd libdispatch
+  autoreconf -fvi
+  ./configure
+  make
+  make check
+  sudo make install
+
+
 Building OpenGCD for Android
 ----------------------------
 

@@ -3,7 +3,7 @@ Building OpenGCD for Linux
 
 Run the following commands to build OpenGCD for Linux.
 
-  autogen.sh
+  ./autogen.sh
   ./configure --prefix=/usr
   make
   sudo make install
@@ -30,21 +30,26 @@ Make sure to read the BUGS file for any bugs pertaining to the Android platform.
 
   4. Install the ADT bundle under /opt. 
 
-  5. Run the OpenGCD configure script and provide the paths to your NDK and SDK.
+  5. Run the 'autogen' script to download needed dependencies and
+     generate the ./configure script.
+
+        ./autogen.sh
+       
+  6. Run the OpenGCD configure script and provide the paths to your NDK and SDK.
      Example:
 
-     ./configure --host=arm-linux-androideabi \
-               --with-ndk=/opt/android-ndk-r8e \
-               --with-sdk=/opt/adt-bundle-linux-x86_64-20130219/sdk
+        ./configure --host=arm-linux-androideabi \
+            --with-ndk=/opt/android-ndk-r8e \
+            --with-sdk=/opt/adt-bundle-linux-x86_64-20130219/sdk
 
-       **NOTE** The path to the SDK depends on what OS you are using,
-                the above example is for a 64-bit Linux host.
+     **NOTE** The path to the SDK depends on what OS you are using,
+              the above example is for a 64-bit Linux host.
 
-  6. Build libdispatch
+  7. Build libdispatch
 
         make
 
-  7. Run the unit tests
+  8. Run the unit tests
 
         make check
 
